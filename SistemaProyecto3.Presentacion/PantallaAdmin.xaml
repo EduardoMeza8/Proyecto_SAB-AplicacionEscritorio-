@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SistemaProyecto3.Presentacion"
         mc:Ignorable="d"
-        Title="PantallaAdmin" Height="520" Width="866" WindowStartupLocation="CenterScreen">
+        Title="PantallaAdmin" Height="520" Width="866" WindowStartupLocation="CenterScreen" Closed="DetenerPrograma">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
@@ -75,7 +75,7 @@
                     <Label Content="Contacto" HorizontalAlignment="Left" Margin="83,140,0,0" VerticalAlignment="Top" Height="23" FontWeight="Bold" Foreground="#FF7C7878"/>
                     <Label Content="Direccion" HorizontalAlignment="Left" Margin="83,197,0,0" VerticalAlignment="Top" Height="23" FontWeight="Bold" Foreground="#FF7C7878"/>
                     <TextBox x:Name="textRut_Empresa" HorizontalAlignment="Left" Height="23" Margin="188,88,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" BorderBrush="#FFABADB3"/>
-                    <TextBox x:Name="textContacto_Empresa" HorizontalAlignment="Left" Height="23" Margin="188,144,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" RenderTransformOrigin="0.4,0.305" BorderBrush="#FFABADB3"/>
+                    <TextBox x:Name="textContacto_Empresa" HorizontalAlignment="Left" Height="23" Margin="188,144,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" RenderTransformOrigin="0.4,0.305" BorderBrush="#FFABADB3" PreviewTextInput="SoloNumeros"/>
                     <TextBox x:Name="textDireccion_Empresa" HorizontalAlignment="Left" Height="23" Margin="188,197,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" BorderBrush="#FFABADB3"/>
                     <TextBox x:Name="textNombre_Empresa" HorizontalAlignment="Left" Height="23" Margin="188,35,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" BorderBrush="#FFABADB3"/>
                     <Label Content="Nombre" HorizontalAlignment="Left" Margin="83,32,0,0" VerticalAlignment="Top" Width="76" FontWeight="Bold" Foreground="#FF7C7878"/>
@@ -101,7 +101,7 @@
                         </Button.Background>
                     </Button>
                     <Label Content="Label" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="188,57,0,0" Foreground="{x:Null}"/>
-                    <Label Content="Label" HorizontalAlignment="Left" Margin="188,111,0,0" VerticalAlignment="Top" Foreground="{x:Null}"/>
+                    <Label x:Name="lblRut" Content="Ejemplo: 99999999-9" HorizontalAlignment="Left" Margin="188,111,0,0" VerticalAlignment="Top" Foreground="Gray"/>
                     <Label Content="Label" HorizontalAlignment="Left" Margin="188,167,0,0" VerticalAlignment="Top" Foreground="{x:Null}"/>
                     <Label Content="Label" HorizontalAlignment="Left" Margin="188,222,0,0" VerticalAlignment="Top" Foreground="{x:Null}"/>
                 </Grid>
@@ -118,7 +118,7 @@
                     <Label Content="Nombre" HorizontalAlignment="Left" Margin="105,76,0,0" VerticalAlignment="Top" Foreground="#FF7C7878" FontWeight="Bold"/>
                     <Label Content="Comuna" HorizontalAlignment="Left" Margin="105,123,0,0" VerticalAlignment="Top" Foreground="#FF7C7878" FontWeight="Bold"/>
                     <Label Content="Label" HorizontalAlignment="Left" Margin="220,50,0,0" VerticalAlignment="Top" Width="120" Foreground="{x:Null}"/>
-                    <TextBox x:Name="textID_Sucursal" HorizontalAlignment="Left" Height="23" Margin="220,27,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Foreground="Black" TextDecorations="{x:Null}"/>
+                    <TextBox x:Name="textID_Sucursal" HorizontalAlignment="Left" Height="23" Margin="220,27,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Foreground="Black" TextDecorations="{x:Null}" PreviewTextInput="SoloNumeros"/>
                     <TextBox x:Name="textNombre_Sucursal" HorizontalAlignment="Left" Height="23" Margin="220,76,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Foreground="Black"/>
                     <TextBox x:Name="textCiudad_Sucursal" HorizontalAlignment="Left" Height="23" Margin="220,123,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
                     <Label Content="Label" HorizontalAlignment="Left" Margin="220,172,0,0" VerticalAlignment="Top" Foreground="{x:Null}" Width="120"/>

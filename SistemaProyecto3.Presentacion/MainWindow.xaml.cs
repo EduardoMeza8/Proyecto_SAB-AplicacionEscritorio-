@@ -56,7 +56,7 @@ namespace SistemaProyecto3.Presentacion
                         contraseña.Password = "";
                         PantallaAdmin pa = new PantallaAdmin();
                         pa.Show();
-                        this.Hide();
+                        this.Close();
                     }
                     else if (tipo == 2)
                     {
@@ -65,7 +65,7 @@ namespace SistemaProyecto3.Presentacion
                         contraseña.Password = "";
                         PantallaVendedor pv = new PantallaVendedor();
                         pv.Show();
-                        this.Hide();
+                        this.Close();
                     }
                 }
                 else if (user.Text.Length == 0 || contraseña.Password.Length == 0)

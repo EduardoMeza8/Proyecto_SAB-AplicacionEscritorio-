@@ -1,6 +1,8 @@
 ﻿using SistemaProyecto3.Negocio;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -19,6 +21,8 @@ namespace SistemaProyecto3.Presentacion
         private List<Usuario> ListUsuariosAdmin;
         private List<Usuario> ListUsuariosVendedor;
         private List<Mecanico> ListMecanicos;
+        //Variable para validar si se abre ventana Main
+        private bool valor = false;
 
         public PantallaAdmin()
         {
@@ -43,37 +47,72 @@ namespace SistemaProyecto3.Presentacion
             ListMecanicos = m1.GetMecanicos();
             DataGridMecanicos.ItemsSource = ListMecanicos;
             DataGridMecanicos.Items.Refresh();
+
+            //Esconder labels
+            lblRut.Visibility = Visibility.Hidden;
         }
 
-        // Botones Empresa
+        // Empresa
+        private void SoloNumeros(object sender, System.Windows.Input.TextCompositionEventArgs e)
+        {
+            Regex regex = new Regex("[^0-9]+");
+            e.Handled = regex.IsMatch(e.Text);
+        }
 
         //  Boton Crear Empresa
         private void Button_Click_4(object sender, RoutedEventArgs e)
         {
             try
             {
-                Empresa em = new Empresa()
+                Empresa empresaValidaciones = new Empresa();
+                if (textNombre_Empresa.Text.Length == 0 || textRut_Empresa.Text.Length == 0 ||
+                    textContacto_Empresa.Text.Length == 0 || textDireccion_Empresa.Text.Length == 0)
                 {
-                    rut_empresa = textRut_Empresa.Text,
-                    nombre_empresa = textNombre_Empresa.Text,
-                    contacto = int.Parse(textContacto_Empresa.Text),
-                    direccion = textDireccion_Empresa.Text
-                };
-                if (em.CreateEmpresa())
-                {
-                    MessageBox.Show("Empresa Creada");
-                    textRut_Empresa.Text = "";
-                    textNombre_Empresa.Text = "";
-                    textContacto_Empresa.Text = "";
-                    textDireccion_Empresa.Text = "";
+                    MessageBox.Show("Uno o más campos estan vacíos");
                 }
-                else if (textRut_Empresa.Text == em.rut_empresa)
+                else if (textContacto_Empresa.Text.Length < 8)
                 {
-                    MessageBox.Show("La empresa ya existe");
+                    MessageBox.Show("El contacto debe tener 8 digitos");
                 }
                 else
                 {
-                    throw new ArgumentException("Ha ocurrido un error inesperado");
+                    string rutSinDv = textRut_Empresa.Text.Substring(0, textRut_Empresa.Text.Length - 2);
+                    string dv = textRut_Empresa.Text.Substring(textRut_Empresa.Text.Length - 1, 1);
+                    string rutSinGuion = rutSinDv + dv;
+                    if (textRut_Empresa.Text != String.Format("{0}-{1}", rutSinDv, dv))
+                    {
+                        lblRut.Visibility = Visibility.Visible;
+                    }
+                    else if (!empresaValidaciones.ValidarRut(textRut_Empresa.Text.ToUpper()))
+                    {
+                        MessageBox.Show("El rut no es válido");
+                    }
+                    else if (empresaValidaciones.GetEmpresa().Any(c => c.rut_empresa == textRut_Empresa.Text.ToUpper()))
+                    {
+                        MessageBox.Show("El rut de empresa ya existe");
+                    }
+                    else
+                    {
+                        Empresa em = new Empresa()
+                        {
+                            rut_empresa = textRut_Empresa.Text.ToUpper(),
+                            nombre_empresa = textNombre_Empresa.Text,
+                            contacto = int.Parse(textContacto_Empresa.Text),
+                            direccion = textDireccion_Empresa.Text
+                        };
+                        if (em.CreateEmpresa())
+                        {
+                            MessageBox.Show("Empresa Creada");
+                            textRut_Empresa.Text = "";
+                            textNombre_Empresa.Text = "";
+                            textContacto_Empresa.Text = "";
+                            textDireccion_Empresa.Text = "";
+                        }
+                        else
+                        {
+                            throw new ArgumentException("Ha ocurrido un error inesperado");
+                        }
+                    }
                 }
             }
             catch (Exception ex)
@@ -87,27 +126,52 @@ namespace SistemaProyecto3.Presentacion
         {
             try 
             {
-                Empresa em = new Empresa()
+                Empresa empresaValidaciones = new Empresa();
+                if (empresaValidaciones.GetEmpresa().Count == 0)
                 {
-                    rut_empresa = textRut_Empresa.Text
-                };
-                if (em.DeleteEmpresa())
-                {
-                    MessageBox.Show("Empresa Eliminada");
-                    textRut_Empresa.Text = "";
-                    textNombre_Empresa.Text = "";
-                    textContacto_Empresa.Text = "";
-                    textDireccion_Empresa.Text = "";
+                    MessageBox.Show("Aún no hay empresas");
                 }
-                else if (textRut_Empresa.Text == " ")
+                else if (textRut_Empresa.Text == "")
                 {
                     MessageBox.Show("Ingrese el rut que desea eliminar");
                 }
-                else 
+                else
                 {
-                    throw new ArgumentException("Ha ocurrido un error inesperado");
+                    string rutSinDv = textRut_Empresa.Text.Substring(0, textRut_Empresa.Text.Length - 2);
+                    string dv = textRut_Empresa.Text.Substring(textRut_Empresa.Text.Length - 1, 1);
+                    string rutSinGuion = rutSinDv + dv;
+                    if (textRut_Empresa.Text != String.Format("{0}-{1}", rutSinDv, dv))
+                    {
+                        lblRut.Visibility = Visibility.Visible;
+                    }
+                    else if (!empresaValidaciones.ValidarRut(textRut_Empresa.Text.ToUpper()))
+                    {
+                        MessageBox.Show("El rut no es válido");
+                    }
+                    else if (!empresaValidaciones.GetEmpresa().Any(c => c.rut_empresa == textRut_Empresa.Text.ToUpper()))
+                    {
+                        MessageBox.Show("El rut de empresa no existe");
+                    }
+                    else
+                    {
+                        Empresa em = new Empresa()
+                        {
+                            rut_empresa = textRut_Empresa.Text.ToUpper()
+                        };
+                        if (em.DeleteEmpresa())
+                        {
+                            MessageBox.Show("Empresa Eliminada");
+                            textRut_Empresa.Text = "";
+                            textNombre_Empresa.Text = "";
+                            textContacto_Empresa.Text = "";
+                            textDireccion_Empresa.Text = "";
+                        }
+                        else
+                        {
+                            throw new ArgumentException("Ha ocurrido un error inesperado");
+                        }
+                    }
                 }
-
             }
             catch (Exception ex)
             {
@@ -120,28 +184,51 @@ namespace SistemaProyecto3.Presentacion
         {
             try 
             {
-                Empresa em = new Empresa()
+                if (textNombre_Empresa.Text.Length == 0 || textRut_Empresa.Text.Length == 0 ||
+                    textContacto_Empresa.Text.Length == 0 || textDireccion_Empresa.Text.Length == 0)
                 {
-                    rut_empresa = textRut_Empresa.Text,
-                    nombre_empresa = textNombre_Empresa.Text,
-                    contacto = int.Parse(textContacto_Empresa.Text),
-                    direccion = textDireccion_Empresa.Text
-                };
-                if (em.UpdateEmpresa())
-                {
-                    MessageBox.Show("Empresa Actualizada");
-                    textRut_Empresa.Text = "";
-                    textNombre_Empresa.Text = "";
-                    textContacto_Empresa.Text = "";
-                    textDireccion_Empresa.Text = "";
+                    MessageBox.Show("Uno o más campos estan vacíos");
                 }
-                else if (textRut_Empresa.Text == "") 
+                else if (textContacto_Empresa.Text.Length < 8)
                 {
-                    MessageBox.Show("Debe ingresar un rut para continuar");
+                    MessageBox.Show("El contacto debe tener 8 digitos");
                 }
                 else
                 {
-                    MessageBox.Show("Ha ocurrido un error inesperado");
+                    Empresa empresaValidaciones = new Empresa();
+                    string rutSinDv = textRut_Empresa.Text.Substring(0, textRut_Empresa.Text.Length - 2);
+                    string dv = textRut_Empresa.Text.Substring(textRut_Empresa.Text.Length - 1, 1);
+                    string rutSinGuion = rutSinDv + dv;
+                    if (textRut_Empresa.Text != String.Format("{0}-{1}", rutSinDv, dv))
+                    {
+                        lblRut.Visibility = Visibility.Visible;
+                    }
+                    else if (!empresaValidaciones.GetEmpresa().Any(c => c.rut_empresa == textRut_Empresa.Text.ToUpper()))
+                    {
+                        MessageBox.Show("El rut de empresa no existe");
+                    }
+                    else
+                    {
+                        Empresa em = new Empresa()
+                        {
+                            rut_empresa = textRut_Empresa.Text.ToUpper(),
+                            nombre_empresa = textNombre_Empresa.Text,
+                            contacto = int.Parse(textContacto_Empresa.Text),
+                            direccion = textDireccion_Empresa.Text
+                        };
+                        if (em.UpdateEmpresa())
+                        {
+                            MessageBox.Show("Empresa Actualizada");
+                            textRut_Empresa.Text = "";
+                            textNombre_Empresa.Text = "";
+                            textContacto_Empresa.Text = "";
+                            textDireccion_Empresa.Text = "";
+                        }
+                        else
+                        {
+                            MessageBox.Show("Ha ocurrido un error inesperado");
+                        }
+                    }
                 }
             }
             catch (Exception ex) 
@@ -155,26 +242,48 @@ namespace SistemaProyecto3.Presentacion
         {
             try 
             {
-                Empresa em = new Empresa()
+                Empresa empresaValidaciones = new Empresa();
+                if (empresaValidaciones.GetEmpresa().Count == 0)
                 {
-                    rut_empresa = textRut_Empresa.Text
-                };
-                if (em.searchEmpresa()) 
-                {
-                    textRut_Empresa.Text = em.rut_empresa;
-                    textNombre_Empresa.Text = em.nombre_empresa;
-                    textContacto_Empresa.Text = Convert.ToString(em.contacto);
-                    textDireccion_Empresa.Text = em.direccion;
+                    MessageBox.Show("Aún no hay empresas");
                 }
                 else if (textRut_Empresa.Text == "")
                 {
-                    MessageBox.Show("Ingrese rut para buscar");
+                    MessageBox.Show("Ingrese rut para llenar campos");
                 }
                 else
                 {
-                    throw new ArgumentException("Ha ocurrido un error inesperado");
-                }
+                    string rutSinDv = textRut_Empresa.Text.Substring(0, textRut_Empresa.Text.Length - 2);
+                    string dv = textRut_Empresa.Text.Substring(textRut_Empresa.Text.Length - 1, 1);
+                    string rutSinGuion = rutSinDv + dv;
+                    if (textRut_Empresa.Text != String.Format("{0}-{1}", rutSinDv, dv))
+                    {
+                        lblRut.Visibility = Visibility.Visible;
+                    }
+                    else if (!empresaValidaciones.GetEmpresa().Any(c => c.rut_empresa == textRut_Empresa.Text.ToUpper()))
+                    {
+                        MessageBox.Show("El rut de empresa no existe");
+                    }
+                    else
+                    {
+                        Empresa em = new Empresa()
+                        {
+                            rut_empresa = textRut_Empresa.Text.ToUpper()
+                        };
+                        if (em.searchEmpresa())
+                        {
+                            textRut_Empresa.Text = em.rut_empresa;
+                            textNombre_Empresa.Text = em.nombre_empresa;
+                            textContacto_Empresa.Text = Convert.ToString(em.contacto);
+                            textDireccion_Empresa.Text = em.direccion;
+                        }
 
+                        else
+                        {
+                            throw new ArgumentException("Ha ocurrido un error inesperado");
+                        }
+                    }
+                }
             }
             catch (Exception ex) 
             {
@@ -198,20 +307,36 @@ namespace SistemaProyecto3.Presentacion
         {
             try
             {
-                Sucursal s1 = new Sucursal()
+                Sucursal sucursalValidaciones = new Sucursal();
+                if (sucursalValidaciones.GetSucursales().Count == 0)
                 {
-                    id_sucursal = int.Parse(textID_Sucursal.Text)
-                };
-                if (s1.ReadScrsl())
+                    MessageBox.Show("Aún no hay sucursales");
+                }
+                else if (textID_Sucursal.Text.Length == 0)
                 {
-                    textID_Sucursal.Text = Convert.ToString(s1.id_sucursal);
-                    textCiudad_Sucursal.Text = s1.ciudad_sucursal;
-                    textDireccion_Sucursal.Text = s1.direccion_sucursal;
-                    textNombre_Sucursal.Text = s1.nombre_sucursal;
+                    MessageBox.Show("Ingrese el numero de sucursal para llenar campos");
+                }
+                else if (!sucursalValidaciones.GetSucursales().Any(c => c.id_sucursal == int.Parse(textID_Sucursal.Text)))
+                {
+                    MessageBox.Show("El id ingresado no corresponde a ninguna sucursal");
                 }
                 else
                 {
-                    throw new ArgumentException("Ha ocurrido un error inesperado");
+                    Sucursal s1 = new Sucursal()
+                    {
+                        id_sucursal = int.Parse(textID_Sucursal.Text)
+                    };
+                    if (s1.ReadScrsl())
+                    {
+                        textID_Sucursal.Text = Convert.ToString(s1.id_sucursal);
+                        textCiudad_Sucursal.Text = s1.ciudad_sucursal;
+                        textDireccion_Sucursal.Text = s1.direccion_sucursal;
+                        textNombre_Sucursal.Text = s1.nombre_sucursal;
+                    }
+                    else
+                    {
+                        throw new ArgumentException("Ha ocurrido un error inesperado");
+                    }
                 }
             }
             catch (Exception ex)
@@ -223,19 +348,127 @@ namespace SistemaProyecto3.Presentacion
         // Boton Modificar Sucursal
         private void botonModificar_Sucursal_Click(object sender, RoutedEventArgs e)
         {
+            try
             {
-                try
+                if (textID_Sucursal.Text.Length == 0 || textNombre_Sucursal.Text.Length == 0 ||
+                   textCiudad_Sucursal.Text.Length == 0 || textDireccion_Sucursal.Text.Length == 0)
+                {
+                    MessageBox.Show("Uno o más campos estan vacíos");
+                }
+                else if (textID_Sucursal.Text == "0")
+                {
+                    MessageBox.Show("Debe ingresar un id mayor a 0");
+                }
+                else
+                {
+                    Sucursal sucursalValidaciones = new Sucursal()
+                    {
+                        id_sucursal = int.Parse(textID_Sucursal.Text)
+                    };
+                    if (!sucursalValidaciones.GetSucursales().Any(c => c.id_sucursal == int.Parse(textID_Sucursal.Text)))
+                    {
+                        MessageBox.Show("El id ingresado no corresponde a ninguna sucursal");
+                    }
+                    else
+                    {
+                        if (sucursalValidaciones.ReadScrsl())
+                        {
+                            if (sucursalValidaciones.nombre_sucursal != textNombre_Sucursal.Text)
+                            {
+                                if (sucursalValidaciones.GetSucursales().Any(c => c.nombre_sucursal == textNombre_Sucursal.Text))
+                                {
+                                    MessageBox.Show("El nombre de la sucursal ya existe");
+                                }
+                                else
+                                {
+                                    Sucursal s1 = new Sucursal()
+                                    {
+                                        id_sucursal = int.Parse(textID_Sucursal.Text),
+                                        ciudad_sucursal = textCiudad_Sucursal.Text,
+                                        direccion_sucursal = textDireccion_Sucursal.Text,
+                                        nombre_sucursal = textNombre_Sucursal.Text
+                                    };
+                                    if (s1.UpdateScrsl())
+                                    {
+                                        MessageBox.Show("Sucursal Actualizada");
+                                        textID_Sucursal.Text = "";
+                                        textCiudad_Sucursal.Text = "";
+                                        textDireccion_Sucursal.Text = "";
+                                        textNombre_Sucursal.Text = "";
+                                    }
+                                    else
+                                    {
+                                        throw new ArgumentException("Ha ocurrido un error inesperado");
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                Sucursal s1 = new Sucursal()
+                                {
+                                    id_sucursal = int.Parse(textID_Sucursal.Text),
+                                    ciudad_sucursal = textCiudad_Sucursal.Text,
+                                    direccion_sucursal = textDireccion_Sucursal.Text,
+                                    nombre_sucursal = textNombre_Sucursal.Text
+                                };
+                                if (s1.UpdateScrsl())
+                                {
+                                    MessageBox.Show("Sucursal Actualizada");
+                                    textID_Sucursal.Text = "";
+                                    textCiudad_Sucursal.Text = "";
+                                    textDireccion_Sucursal.Text = "";
+                                    textNombre_Sucursal.Text = "";
+                                }
+                                else
+                                {
+                                    throw new ArgumentException("Ha ocurrido un error inesperado");
+                                }
+                            }
+                        }
+                        else
+                        {
+                            throw new ArgumentException("No se ha logrado obtener los datos de la sucursal ingresada");
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+        
+        // Boton Eliminar Sucursal
+        private void botonEliminar_Sucursal_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Sucursal sucursalValidaciones = new Sucursal();
+                if (sucursalValidaciones.GetSucursales().Count == 0)
+                {
+                    MessageBox.Show("Aún no hay sucursales");
+                }
+                else if (textID_Sucursal.Text.Length == 0)
+                {
+                    MessageBox.Show("Debe ingresar el id de la sucursal a eliminar");
+                }
+                else if (textID_Sucursal.Text == "0")
+                {
+                    MessageBox.Show("El id de la sucursal debe ser mayor a 0");
+                }
+                else if (!sucursalValidaciones.GetSucursales().Any(c => c.id_sucursal == int.Parse(textID_Sucursal.Text)))
+                {
+                    MessageBox.Show("El id ingresado no corresponde a ninguna sucursal");
+                }
+                else
                 {
                     Sucursal s1 = new Sucursal()
                     {
-                        id_sucursal = int.Parse(textID_Sucursal.Text),
-                        ciudad_sucursal = textCiudad_Sucursal.Text,
-                        direccion_sucursal = textDireccion_Sucursal.Text,
-                        nombre_sucursal = textNombre_Sucursal.Text
+                        id_sucursal = int.Parse(textID_Sucursal.Text)
                     };
-                    if (s1.UpdateScrsl())
+                    if (s1.DeleteScrsl())
                     {
-                        MessageBox.Show("Sucursal Actualizada");
+                        MessageBox.Show("La sucursal se elimino");
                         textID_Sucursal.Text = "";
                         textCiudad_Sucursal.Text = "";
                         textDireccion_Sucursal.Text = "";
@@ -245,34 +478,6 @@ namespace SistemaProyecto3.Presentacion
                     {
                         throw new ArgumentException("Ha ocurrido un error inesperado");
                     }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                }
-            }
-        }
-        
-        // Boton Eliminar Sucursal
-        private void botonEliminar_Sucursal_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                Sucursal s1 = new Sucursal()
-                {
-                    id_sucursal = int.Parse(textID_Sucursal.Text)
-                };
-                if (s1.DeleteScrsl())
-                {
-                    MessageBox.Show("La sucursal se elimino");
-                    textID_Sucursal.Text = "";
-                    textCiudad_Sucursal.Text = "";
-                    textDireccion_Sucursal.Text = "";
-                    textNombre_Sucursal.Text = "";
-                }
-                else
-                {
-                    throw new ArgumentException("Ha ocurrido un error inesperado");
                 }
             }
             catch (Exception ex)
@@ -286,22 +491,44 @@ namespace SistemaProyecto3.Presentacion
         {
             try
             {
-                Sucursal s1 = new Sucursal()
+                Sucursal sucursalValidaciones = new Sucursal();
+                if (textID_Sucursal.Text.Length == 0 || textNombre_Sucursal.Text.Length == 0 || 
+                    textCiudad_Sucursal.Text.Length == 0 || textDireccion_Sucursal.Text.Length == 0)
                 {
-                    ciudad_sucursal = textCiudad_Sucursal.Text,
-                    direccion_sucursal = textDireccion_Sucursal.Text,
-                    nombre_sucursal = textNombre_Sucursal.Text
-                };
-                if (s1.CreateScrsl())
+                    MessageBox.Show("Uno o más campos estan vacíos");
+                }
+                else if (textID_Sucursal.Text == "0")
                 {
-                    MessageBox.Show("La sucursal se agrego exitosamente");
-                    textCiudad_Sucursal.Text = "";
-                    textDireccion_Sucursal.Text = "";
-                    textNombre_Sucursal.Text = "";
+                    MessageBox.Show("Debe ingresar un id mayor a 0");
+                }
+                else if (sucursalValidaciones.GetSucursales().Any(c => c.id_sucursal == int.Parse(textID_Sucursal.Text)))
+                {
+                    MessageBox.Show("El id de la sucursal ya existe");
+                }
+                else if (sucursalValidaciones.GetSucursales().Any(c => c.nombre_sucursal == textNombre_Sucursal.Text))
+                {
+                    MessageBox.Show("El nombre de la sucursal ya existe");
                 }
                 else
                 {
-                    throw new ArgumentException("Ha ocurrido un error inesperado");
+                    Sucursal s1 = new Sucursal()
+                    {
+                        ciudad_sucursal = textCiudad_Sucursal.Text,
+                        direccion_sucursal = textDireccion_Sucursal.Text,
+                        nombre_sucursal = textNombre_Sucursal.Text
+                    };
+                    if (s1.CreateScrsl())
+                    {
+                        MessageBox.Show("La sucursal se agrego exitosamente");
+                        textID_Sucursal.Text = "";
+                        textCiudad_Sucursal.Text = "";
+                        textDireccion_Sucursal.Text = "";
+                        textNombre_Sucursal.Text = "";
+                    }
+                    else
+                    {
+                        throw new ArgumentException("Ha ocurrido un error inesperado");
+                    }
                 }
             }
             catch (Exception ex)
@@ -349,9 +576,10 @@ namespace SistemaProyecto3.Presentacion
         // Boton Cierra la ventana Admin 
         private void botonPrincipal_Cerrar_Click(object sender, RoutedEventArgs e)
         {
+            valor = true;
             MainWindow mw = new MainWindow();
+            mw.Show();
             this.Close();
-            mw.Show();            
         }
         // Botones Principales
 
@@ -891,6 +1119,16 @@ namespace SistemaProyecto3.Presentacion
             DataGridMecanicos.ItemsSource = ListMecanicos;
             DataGridMecanicos.Items.Refresh();
         }
+
+        private void DetenerPrograma(object sender, EventArgs e)
+        {
+            if (!valor)
+            {
+                Environment.Exit(0);
+            }
+        }
+
+
         // Botones Pagina Mecanico
     }
 }

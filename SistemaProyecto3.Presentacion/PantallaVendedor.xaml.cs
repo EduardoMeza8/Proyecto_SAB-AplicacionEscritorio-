@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Media;
 using SistemaProyecto3.Negocio;
 
 namespace SistemaProyecto3.Presentacion
@@ -18,7 +19,8 @@ namespace SistemaProyecto3.Presentacion
         private List<Mecanico> ListMecanico;
         private List<Empresa> ListEmpresa;
         private List<Venta> ListVentas;
-
+        //Variable para validar si se abre ventana Main
+        private bool valor = false;
 
         public PantallaVendedor()
         {
@@ -109,6 +111,7 @@ namespace SistemaProyecto3.Presentacion
 
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {
+            valor = true;
             MainWindow mw = new MainWindow();
             mw.Show();
             this.Close();
@@ -456,6 +459,12 @@ namespace SistemaProyecto3.Presentacion
             EdadClienteBoleta.Text = "";
         }
 
-        
+        private void DetenerPrograma(object sender, EventArgs e)
+        {
+            if (!valor)
+            {
+                Environment.Exit(0);
+            }
+        }
     }
 }

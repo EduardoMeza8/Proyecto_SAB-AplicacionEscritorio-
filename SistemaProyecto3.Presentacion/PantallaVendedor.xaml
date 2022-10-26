@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SistemaProyecto3.Presentacion"
         mc:Ignorable="d"
-        Title="Pantalla Vendedor" Height="639" Width="866" WindowStartupLocation="CenterScreen">
+        Title="Pantalla Vendedor" Height="639" Width="866" WindowStartupLocation="CenterScreen" Closed="DetenerPrograma">
     <Grid>
         <Grid.Background>
             <ImageBrush/>

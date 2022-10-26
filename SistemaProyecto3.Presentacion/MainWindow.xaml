@@ -18,8 +18,9 @@
         <Image Margin="287,0,0,0" Source="unnamed.jpg" Stretch="Fill"/>
         <Label Content="ID Usuario" HorizontalAlignment="Left" Margin="167,61,0,0" VerticalAlignment="Top" Foreground="Gray" FontWeight="Bold"/>
         <Label Content="Contraseña" HorizontalAlignment="Left" Margin="167,138,0,0" VerticalAlignment="Top" Foreground="Gray" FontWeight="Bold"/>
-        <PasswordBox x:Name="contraseña" HorizontalAlignment="Left" Margin="143,164,0,0" VerticalAlignment="Top" Width="119" Height="25" BorderBrush="Gray" Foreground="Gray"/>
+        
         <TextBox x:Name="user" HorizontalAlignment="Left" Height="25" Margin="143,87,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="119" BorderBrush="Gray" Foreground="Gray"/>
+        <PasswordBox x:Name="contraseña" HorizontalAlignment="Left" Margin="143,164,0,0" VerticalAlignment="Top" Width="119" Height="25" BorderBrush="Gray" Foreground="Gray"/>
         <Label Content="Label" HorizontalAlignment="Left" Margin="143,112,0,0" VerticalAlignment="Top" Width="119" Foreground="{x:Null}"/>
         <Label Content="Label" HorizontalAlignment="Left" Margin="143,189,0,0" VerticalAlignment="Top" Width="119" Foreground="{x:Null}"/>
         <Label Content="S.A.B" HorizontalAlignment="Left" Margin="167,0,0,0" VerticalAlignment="Top" Width="69" FontSize="24" Background="{x:Null}" Foreground="Gray" FontWeight="Bold" RenderTransformOrigin="0.5,0.476"/>
