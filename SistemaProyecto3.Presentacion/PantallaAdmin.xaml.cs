@@ -52,7 +52,7 @@ namespace SistemaProyecto3.Presentacion
             lblRut.Visibility = Visibility.Hidden;
         }
 
-        // Empresa
+        // Campos solo numeros
         private void SoloNumeros(object sender, System.Windows.Input.TextCompositionEventArgs e)
         {
             Regex regex = new Regex("[^0-9]+");
@@ -73,6 +73,10 @@ namespace SistemaProyecto3.Presentacion
                 else if (textContacto_Empresa.Text.Length < 8)
                 {
                     MessageBox.Show("El contacto debe tener 8 digitos");
+                }
+                else if (textRut_Empresa.Text.Length < 2)
+                {
+                    MessageBox.Show("Debe ingresar un rut válido");
                 }
                 else
                 {
@@ -135,6 +139,10 @@ namespace SistemaProyecto3.Presentacion
                 {
                     MessageBox.Show("Ingrese el rut que desea eliminar");
                 }
+                else if (textRut_Empresa.Text.Length < 2)
+                {
+                    MessageBox.Show("Debe ingresar un rut válido");
+                }
                 else
                 {
                     string rutSinDv = textRut_Empresa.Text.Substring(0, textRut_Empresa.Text.Length - 2);
@@ -193,6 +201,10 @@ namespace SistemaProyecto3.Presentacion
                 {
                     MessageBox.Show("El contacto debe tener 8 digitos");
                 }
+                else if (textRut_Empresa.Text.Length < 2)
+                {
+                    MessageBox.Show("Debe ingresar un rut válido");
+                }
                 else
                 {
                     Empresa empresaValidaciones = new Empresa();
@@ -250,6 +262,10 @@ namespace SistemaProyecto3.Presentacion
                 else if (textRut_Empresa.Text == "")
                 {
                     MessageBox.Show("Ingrese rut para llenar campos");
+                }
+                else if (textRut_Empresa.Text.Length < 2)
+                {
+                    MessageBox.Show("Debe ingresar un rut válido");
                 }
                 else
                 {
@@ -565,12 +581,19 @@ namespace SistemaProyecto3.Presentacion
         private void botonPrincipal_Usuarios_Click(object sender, RoutedEventArgs e)
         {
             tab_PrincipalAdmin.SelectedIndex = 2;
+            //ComboBox Sucursales || Vendedor
+            Sucursal suc = new Sucursal();
+            ComboIDSucursal.ItemsSource = suc.GetIDSucursales();
+            ComboIDSucursal.Items.Refresh();
         }
 
         // Boton Principal Mecanico (Abre el tabitem"Mecanico")
         private void botonPrincipal_Mecanico_Click(object sender, RoutedEventArgs e)
         {
             tab_PrincipalAdmin.SelectedIndex = 3;
+            Sucursal suc = new Sucursal();
+            ComboIDSucursalMecanico.ItemsSource = suc.GetIDSucursales();
+            ComboIDSucursalMecanico.Items.Refresh();
         }
 
         // Boton Cierra la ventana Admin 
@@ -590,32 +613,73 @@ namespace SistemaProyecto3.Presentacion
         {
             try
             {
-                Vendedor v1 = new Vendedor()
+                if (RutVendedor.Text.Length == 0 || NombreVendedor.Text.Length == 0 || 
+                    ApellidosVendedor.Text.Length == 0 || EdadVendedor.Text.Length == 0 ||
+                    ComboSexoVendedor.SelectedIndex == 0 || SueldoVendedor.Text.Length == 0 ||
+                    ComboIDSucursal.SelectedIndex == -1)
                 {
-                    rut_vendedor = RutVendedor.Text,
-                    nombre_vendedor = NombreVendedor.Text,
-                    apellidos_vendedor = ApellidosVendedor.Text,
-                    edad_vendedor = int.Parse(EdadVendedor.Text),
-                    sexo_vendedor = ComboSexoVendedor.Text,
-                    sueldo_vendedor = int.Parse(SueldoVendedor.Text),
-                    bono_vendedor = 0,
-                    ventas_totales = 0,
-                    id_sucursal = int.Parse(ID_Sucursal.Text)
-                };
-                if (v1.CreateVendedor())
+                    MessageBox.Show("Uno o más campos estan vacíos");
+                }
+                else if (int.Parse(EdadVendedor.Text) < 18)
                 {
-                    MessageBox.Show("El vendedor se ha creado exitosamente");
-                    RutVendedor.Text = "";
-                    NombreVendedor.Text = "";
-                    ApellidosVendedor.Text = "";
-                    EdadVendedor.Text = "";
-                    ComboSexoVendedor.SelectedIndex = 0;
-                    SueldoVendedor.Text = "";
-                    ID_Sucursal.Text = "";
+                    MessageBox.Show("El vendedor debe ser mayor de edad");
+                }
+                else if (int.Parse(SueldoVendedor.Text) < 150000)
+                {
+                    MessageBox.Show("El sueldo no puede ser menor a $150.000");
+                }
+                else if (RutVendedor.Text.Length < 2)
+                {
+                    MessageBox.Show("Debe ingresar un rut válido");
                 }
                 else
                 {
-                    throw new ArgumentException("Ha ocurrido un error inesperado");
+                    Vendedor vendedorValidaciones = new Vendedor();
+                    string rutSinDv = RutVendedor.Text.Substring(0, RutVendedor.Text.Length - 2);
+                    string dv = RutVendedor.Text.Substring(RutVendedor.Text.Length - 1, 1);
+                    string rutSinGuion = rutSinDv + dv;
+                    if (RutVendedor.Text != String.Format("{0}-{1}", rutSinDv, dv))
+                    {
+                        MessageBox.Show("Debe ingresar rut sin puntos y con guion\nEjemplo: 99999999-9");
+                    }
+                    else if (!vendedorValidaciones.ValidarRut(RutVendedor.Text.ToUpper()))
+                    {
+                        MessageBox.Show("El rut ingresado no es válido");
+                    }
+                    else if (vendedorValidaciones.GetVendedores().Any(c => c.rut_vendedor == RutVendedor.Text.ToUpper()))
+                    {
+                        MessageBox.Show("El rut ingresado ya esta asociado a otro vendedor");
+                    }
+                    else
+                    {
+                        Vendedor v1 = new Vendedor()
+                        {
+                            rut_vendedor = RutVendedor.Text.ToUpper(),
+                            nombre_vendedor = NombreVendedor.Text,
+                            apellidos_vendedor = ApellidosVendedor.Text,
+                            edad_vendedor = int.Parse(EdadVendedor.Text),
+                            sexo_vendedor = ComboSexoVendedor.Text,
+                            sueldo_vendedor = int.Parse(SueldoVendedor.Text),
+                            bono_vendedor = 0,
+                            ventas_totales = 0,
+                            id_sucursal = int.Parse(ComboIDSucursal.Text)
+                        };
+                        if (v1.CreateVendedor())
+                        {
+                            MessageBox.Show("El vendedor se ha creado exitosamente");
+                            RutVendedor.Text = "";
+                            NombreVendedor.Text = "";
+                            ApellidosVendedor.Text = "";
+                            EdadVendedor.Text = "";
+                            ComboSexoVendedor.SelectedIndex = 0;
+                            SueldoVendedor.Text = "";
+                            ComboIDSucursal.SelectedIndex = -1;
+                        }
+                        else
+                        {
+                            throw new ArgumentException("Ha ocurrido un error inesperado");
+                        }
+                    }
                 }
             }
             catch (Exception ex)
@@ -629,23 +693,57 @@ namespace SistemaProyecto3.Presentacion
         {
             try
             {
-                Vendedor v1 = new Vendedor()
+                Vendedor vendedorValidaciones = new Vendedor();
+                if (vendedorValidaciones.GetVendedores().Count == 0)
                 {
-                    rut_vendedor = RutVendedor.Text
-                };
-                if (v1.ReadVendedor())
+                    MessageBox.Show("Aún no hay vendedores");
+                }
+                else if (RutVendedor.Text.Length == 0)
                 {
-                    RutVendedor.Text = v1.rut_vendedor;
-                    NombreVendedor.Text = v1.nombre_vendedor;
-                    ApellidosVendedor.Text = v1.apellidos_vendedor;
-                    EdadVendedor.Text = Convert.ToString(v1.edad_vendedor);
-                    ComboSexoVendedor.Text = v1.sexo_vendedor;
-                    SueldoVendedor.Text = Convert.ToString(v1.sueldo_vendedor);
-                    ID_Sucursal.Text = Convert.ToString(v1.id_sucursal);
+                    MessageBox.Show("Ingrese rut para llenar campos");
+                }
+                else if (RutVendedor.Text.Length < 2)
+                {
+                    MessageBox.Show("Debe ingresar un rut válido");
                 }
                 else
                 {
-                    throw new ArgumentException("Ha ocurrido un error inesperado");
+                    string rutSinDv = RutVendedor.Text.Substring(0, RutVendedor.Text.Length - 2);
+                    string dv = RutVendedor.Text.Substring(RutVendedor.Text.Length - 1, 1);
+                    string rutSinGuion = rutSinDv + dv;
+                    if (RutVendedor.Text != String.Format("{0}-{1}", rutSinDv, dv))
+                    {
+                        MessageBox.Show("Debe ingresar rut sin puntos y con guion\nEjemplo: 99999999-9");
+                    }
+                    else if (!vendedorValidaciones.ValidarRut(RutVendedor.Text.ToUpper()))
+                    {
+                        MessageBox.Show("El rut ingresado no es válido");
+                    }
+                    else if (!vendedorValidaciones.GetVendedores().Any(c => c.rut_vendedor == RutVendedor.Text.ToUpper()))
+                    {
+                        MessageBox.Show("El rut ingresado no existe");
+                    }
+                    else
+                    {
+                        Vendedor v1 = new Vendedor()
+                        {
+                            rut_vendedor = RutVendedor.Text
+                        };
+                        if (v1.ReadVendedor())
+                        {
+                            RutVendedor.Text = v1.rut_vendedor;
+                            NombreVendedor.Text = v1.nombre_vendedor;
+                            ApellidosVendedor.Text = v1.apellidos_vendedor;
+                            EdadVendedor.Text = Convert.ToString(v1.edad_vendedor);
+                            ComboSexoVendedor.Text = v1.sexo_vendedor;
+                            SueldoVendedor.Text = Convert.ToString(v1.sueldo_vendedor);
+                            ComboIDSucursal.Text = v1.id_sucursal.ToString();
+                        }
+                        else
+                        {
+                            throw new ArgumentException("Ha ocurrido un error inesperado");
+                        }
+                    }
                 }
             }
             catch (Exception ex)
@@ -659,30 +757,81 @@ namespace SistemaProyecto3.Presentacion
         {
             try
             {
-                Vendedor v1 = new Vendedor()
+                Vendedor vendedorValidaciones = new Vendedor();
+                if (vendedorValidaciones.GetVendedores().Count == 0)
                 {
-                    rut_vendedor =  RutVendedor.Text,
-                    nombre_vendedor = NombreVendedor.Text,
-                    apellidos_vendedor = ApellidosVendedor.Text,
-                    edad_vendedor = int.Parse(EdadVendedor.Text),
-                    sexo_vendedor = ComboSexoVendedor.Text,
-                    sueldo_vendedor = int.Parse(SueldoVendedor.Text),
-                    id_sucursal = int.Parse(ID_Sucursal.Text)
-            };
-                if (v1.UpdateVendedor())
+                    MessageBox.Show("Debe existir al menos un vendedor para modificarlo");
+                }
+                else if (RutVendedor.Text.Length == 0)
                 {
-                    MessageBox.Show("Los datos del vendedor se actualizaron");
-                    RutVendedor.Text = "";
-                    NombreVendedor.Text = "";
-                    ApellidosVendedor.Text = "";
-                    EdadVendedor.Text = "";
-                    ComboSexoVendedor.SelectedIndex = 0;
-                    SueldoVendedor.Text = "";
-                    ID_Sucursal.Text = "";
+                    MessageBox.Show("Ingrese rut para modifcar vendedor");
+                }
+                else if (RutVendedor.Text.Length < 2)
+                {
+                    MessageBox.Show("Debe ingresar un rut válido");
                 }
                 else
                 {
-                    throw new ArgumentException("Ha ocurrido un error inesperado");
+                    string rutSinDv = RutVendedor.Text.Substring(0, RutVendedor.Text.Length - 2);
+                    string dv = RutVendedor.Text.Substring(RutVendedor.Text.Length - 1, 1);
+                    string rutSinGuion = rutSinDv + dv;
+                    if (RutVendedor.Text != String.Format("{0}-{1}", rutSinDv, dv))
+                    {
+                        MessageBox.Show("Debe ingresar rut sin puntos y con guion\nEjemplo: 99999999-9");
+                    }
+                    else if (!vendedorValidaciones.ValidarRut(RutVendedor.Text.ToUpper()))
+                    {
+                        MessageBox.Show("El rut ingresado no es válido");
+                    }
+                    else if (!vendedorValidaciones.GetVendedores().Any(c => c.rut_vendedor == RutVendedor.Text.ToUpper()))
+                    {
+                        MessageBox.Show("El rut ingresado no existe");
+                    }
+                    else
+                    {
+                        if (NombreVendedor.Text.Length == 0 || ApellidosVendedor.Text.Length == 0 ||
+                            EdadVendedor.Text.Length == 0 || ComboSexoVendedor.SelectedIndex == 0 ||
+                            SueldoVendedor.Text.Length == 0 || ComboIDSucursal.SelectedIndex == -1)
+                        {
+                            MessageBox.Show("Uno o más campos estan vacíos");
+                        }
+                        else if (int.Parse(EdadVendedor.Text) < 18)
+                        {
+                            MessageBox.Show("El vendedor debe ser mayor de edad");
+                        }
+                        else if (int.Parse(SueldoVendedor.Text) < 150000)
+                        {
+                            MessageBox.Show("El sueldo no puede ser menor a $150.000");
+                        }
+                        else
+                        {
+                            Vendedor v1 = new Vendedor()
+                            {
+                                rut_vendedor = RutVendedor.Text,
+                                nombre_vendedor = NombreVendedor.Text,
+                                apellidos_vendedor = ApellidosVendedor.Text,
+                                edad_vendedor = int.Parse(EdadVendedor.Text),
+                                sexo_vendedor = ComboSexoVendedor.Text,
+                                sueldo_vendedor = int.Parse(SueldoVendedor.Text),
+                                id_sucursal = int.Parse(ComboIDSucursal.Text)
+                            };
+                            if (v1.UpdateVendedor())
+                            {
+                                MessageBox.Show("Los datos del vendedor se actualizaron");
+                                RutVendedor.Text = "";
+                                NombreVendedor.Text = "";
+                                ApellidosVendedor.Text = "";
+                                EdadVendedor.Text = "";
+                                ComboSexoVendedor.SelectedIndex = 0;
+                                SueldoVendedor.Text = "";
+                                ComboIDSucursal.SelectedIndex = -1;
+                            }
+                            else
+                            {
+                                throw new ArgumentException("Ha ocurrido un error inesperado");
+                            }
+                        }
+                    }
                 }
             }
             catch (Exception ex)
@@ -696,24 +845,58 @@ namespace SistemaProyecto3.Presentacion
         {
             try
             {
-                Vendedor v1 = new Vendedor()
+                Vendedor vendedorValidaciones = new Vendedor();
+                if (vendedorValidaciones.GetVendedores().Count == 0)
                 {
-                    rut_vendedor = RutVendedor.Text
-                };
-                if (v1.DeleteVendedor())
+                    MessageBox.Show("Debe existir al menos un vendedor para eliminarlo");
+                }
+                else if (RutVendedor.Text.Length == 0)
                 {
-                    MessageBox.Show("¡El vendedor se ha eliminado!");
-                    RutVendedor.Text = "";
-                    NombreVendedor.Text = "";
-                    ApellidosVendedor.Text = "";
-                    EdadVendedor.Text = "";
-                    ComboSexoVendedor.SelectedIndex = 0;
-                    SueldoVendedor.Text = "";
-                    ID_Sucursal.Text = "";
+                    MessageBox.Show("Ingrese rut para eliminar vendedor");
+                }
+                else if (RutVendedor.Text.Length < 2)
+                {
+                    MessageBox.Show("Debe ingresar un rut válido");
                 }
                 else
                 {
-                    throw new ArgumentException("Ha ocurrido un error inesperado");
+                    string rutSinDv = RutVendedor.Text.Substring(0, RutVendedor.Text.Length - 2);
+                    string dv = RutVendedor.Text.Substring(RutVendedor.Text.Length - 1, 1);
+                    string rutSinGuion = rutSinDv + dv;
+                    if (RutVendedor.Text != String.Format("{0}-{1}", rutSinDv, dv))
+                    {
+                        MessageBox.Show("Debe ingresar rut sin puntos y con guion\nEjemplo: 99999999-9");
+                    }
+                    else if (!vendedorValidaciones.ValidarRut(RutVendedor.Text.ToUpper()))
+                    {
+                        MessageBox.Show("El rut ingresado no es válido");
+                    }
+                    else if (!vendedorValidaciones.GetVendedores().Any(c => c.rut_vendedor == RutVendedor.Text.ToUpper()))
+                    {
+                        MessageBox.Show("El rut ingresado no existe");
+                    }
+                    else
+                    {
+                        Vendedor v1 = new Vendedor()
+                        {
+                            rut_vendedor = RutVendedor.Text
+                        };
+                        if (v1.DeleteVendedor())
+                        {
+                            MessageBox.Show("El vendedor se ha eliminado");
+                            RutVendedor.Text = "";
+                            NombreVendedor.Text = "";
+                            ApellidosVendedor.Text = "";
+                            EdadVendedor.Text = "";
+                            ComboSexoVendedor.SelectedIndex = 0;
+                            SueldoVendedor.Text = "";
+                            ComboIDSucursal.SelectedIndex = -1;
+                        }
+                        else
+                        {
+                            throw new ArgumentException("Ha ocurrido un error inesperado");
+                        }
+                    }
                 }
             }
             catch (Exception ex)
@@ -731,7 +914,7 @@ namespace SistemaProyecto3.Presentacion
             EdadVendedor.Text = "";
             ComboSexoVendedor.SelectedIndex = 0;
             SueldoVendedor.Text = "";
-            ID_Sucursal.Text = "";
+            ComboIDSucursal.SelectedIndex = -1;
         }
 
         // Boton actualizar DataGrid Vendedores-Usuarios
@@ -766,47 +949,64 @@ namespace SistemaProyecto3.Presentacion
         {
             try
             {
-                Usuario u1 = new Usuario()
+                Usuario usuarioValidaciones = new Usuario();
+                if (NombreUsuario.Text.Length == 0 || ContraseñaUsuario.Password.Length == 0)
                 {
-                    usuario1 = NombreUsuario.Text,
-                    contraseña_usuario = ContraseñaUsuario.Password
-                };
-                if(ComboTipoUsuario.SelectedIndex == 0)
-                {
-                    MessageBox.Show("Debe elegir el tipo de usuario a crear");
+                    MessageBox.Show("Uno o más campos estan vacíos");
                 }
-                else if (ComboTipoUsuario.SelectedIndex == 1)
+                else if (ContraseñaUsuario.Password.Length != 4)
                 {
-                    if (u1.CreateAdmin())
-                    {
-                        MessageBox.Show("Se ha creado el usuario administrador");
-                        ComboTipoUsuario.SelectedIndex = 0;
-                        NombreUsuario.Text = "";
-                        ContraseñaUsuario.Password = "";
-                    }
-                    else
-                    {
-                        throw new ArgumentException("Ha ocurrido un error inesperado");
-                    }
+                    MessageBox.Show("La contraseña debe ser de 4 caracteres");
                 }
-                else if (ComboTipoUsuario.SelectedIndex == 2)
+                else if (usuarioValidaciones.GetUsuarios().Any(c => c.usuario1 == NombreUsuario.Text))
                 {
-                    if (u1.CreateVendedor()) 
-                    {
-                        MessageBox.Show("Se ha creado el usuario vendedor");
-                        ComboTipoUsuario.SelectedIndex = 0;
-                        NombreUsuario.Text = "";
-                        ContraseñaUsuario.Password = "";
-                    }
-                    else
-                    {
-                        throw new ArgumentException("Ha ocurrido un error inesperado");
-                    }
+                    MessageBox.Show("El nombre de usuario ya existe");
                 }
                 else
                 {
-                    throw new ArgumentException("Ha ocurrido un error inesperado");
+                    Usuario u1 = new Usuario()
+                    {
+                        usuario1 = NombreUsuario.Text,
+                        contraseña_usuario = ContraseñaUsuario.Password
+                    };
+                    if (ComboTipoUsuario.SelectedIndex == 0)
+                    {
+                        MessageBox.Show("Debe elegir el tipo de usuario a crear");
+                    }
+                    else if (ComboTipoUsuario.SelectedIndex == 1)
+                    {
+                        if (u1.CreateAdmin())
+                        {
+                            MessageBox.Show("Se ha creado el usuario administrador");
+                            ComboTipoUsuario.SelectedIndex = 0;
+                            NombreUsuario.Text = "";
+                            ContraseñaUsuario.Password = "";
+                        }
+                        else
+                        {
+                            throw new ArgumentException("Ha ocurrido un error inesperado");
+                        }
+                    }
+                    else if (ComboTipoUsuario.SelectedIndex == 2)
+                    {
+                        if (u1.CreateVendedor())
+                        {
+                            MessageBox.Show("Se ha creado el usuario vendedor");
+                            ComboTipoUsuario.SelectedIndex = 0;
+                            NombreUsuario.Text = "";
+                            ContraseñaUsuario.Password = "";
+                        }
+                        else
+                        {
+                            throw new ArgumentException("Ha ocurrido un error inesperado");
+                        }
+                    }
+                    else
+                    {
+                        throw new ArgumentException("Ha ocurrido un error inesperado");
+                    }
                 }
+                
             }
             catch (Exception ex)
             {
@@ -819,45 +1019,36 @@ namespace SistemaProyecto3.Presentacion
         {
             try
             {
-                Usuario u1 = new Usuario()
+                Usuario usuarioValidaciones = new Usuario();
+                if (usuarioValidaciones.GetUsuarios().Count == 0)
                 {
-                    usuario1 = NombreUsuario.Text
-                };
-                if (ComboTipoUsuario.SelectedIndex == 0)
-                {
-                    MessageBox.Show("Debe elegir el tipo de usuario a Eliminar");
+                    MessageBox.Show("Debe existir al menos un usuario para eliminarlo");
                 }
-                else if(ComboTipoUsuario.SelectedIndex == 1)
+                if (NombreUsuario.Text.Length == 0)
                 {
-                    if (u1.DeleteAdmin())
-                    {
-                        MessageBox.Show("El usuario administrador se ha eliminado");
-                        ComboTipoUsuario.SelectedIndex = 0;
-                        NombreUsuario.Text = "";
-                        ContraseñaUsuario.Password = "";
-                    }
-                    else
-                    {
-                        throw new ArgumentException("Ha ocurrido un error inesperado");
-                    }
+                    MessageBox.Show("Debe ingresar el nombre de usuario para eliminarlo");
                 }
-                else if (ComboTipoUsuario.SelectedIndex == 2)
+                else if (!usuarioValidaciones.GetUsuarios().Any(c => c.usuario1 == NombreUsuario.Text))
                 {
-                    if (u1.DeleteVendedor())
-                    {
-                        MessageBox.Show("El usuario vendedor se ha eliminado");
-                        ComboTipoUsuario.SelectedIndex = 0;
-                        NombreUsuario.Text = "";
-                        ContraseñaUsuario.Password = "";
-                    }
-                    else
-                    {
-                        throw new ArgumentException("Ha ocurrido un error inesperado");
-                    }
+                    MessageBox.Show("El usuario no existe");
                 }
                 else
                 {
-                    throw new ArgumentException("Ha ocurrido un error inesperado");
+                    Usuario u1 = new Usuario()
+                    {
+                        usuario1 = NombreUsuario.Text
+                    };
+                    if (u1.DeleteUsuario())
+                    {
+                        MessageBox.Show("El usuario se ha eliminado");
+                        ComboTipoUsuario.SelectedIndex = 0;
+                        NombreUsuario.Text = "";
+                        ContraseñaUsuario.Password = "";
+                    }
+                    else
+                    {
+                        throw new ArgumentException("Ha ocurrido un error inesperado");
+                    }
                 }
             }
             catch (Exception ex)
@@ -871,22 +1062,37 @@ namespace SistemaProyecto3.Presentacion
         {
             try
             {
-                Usuario u1 = new Usuario()
+                Usuario usuarioValidaciones = new Usuario();
+                if (usuarioValidaciones.GetUsuarios().Count == 0)
                 {
-                    usuario1 = NombreUsuario.Text
-                };
-                if (ComboTipoUsuario.SelectedIndex == 0)
-                {
-                    MessageBox.Show("Debe elegir el tipo de usuario a buscar");
+                    MessageBox.Show("Debe existir al menos un usuario para buscar");
                 }
-                else if (ComboTipoUsuario.SelectedIndex == 1)
+                if (NombreUsuario.Text.Length == 0)
                 {
-                    if(u1.ReadAdmin())
+                    MessageBox.Show("Debe ingresar el nombre de usuario para actualizar campos");
+                }
+                else if (!usuarioValidaciones.GetUsuarios().Any(c => c.usuario1 == NombreUsuario.Text))
+                {
+                    MessageBox.Show("El usuario no existe");
+                }
+                else
+                {
+                    Usuario u1 = new Usuario()
                     {
-                        MessageBox.Show("Mostrando los datos del usuario administrador");
-                        ListUsuariosAdmin = u1.GetUsuariosAdmin();
-                        Lista3.ItemsSource = ListUsuariosAdmin;
-                        Lista3.Items.Refresh();
+                        usuario1 = NombreUsuario.Text
+                    };
+                    if (u1.ReadUsuarios())
+                    {
+                        if (u1.tipo_usuario == 1)
+                        {
+                            MessageBox.Show("Mostrando los datos del usuario administrador");
+                            ComboTipoUsuario.SelectedIndex = 1;
+                        }
+                        else if (u1.tipo_usuario == 2)
+                        {
+                            MessageBox.Show("Mostrando los datos del usuario Vendedor");
+                            ComboTipoUsuario.SelectedIndex = 2;
+                        }
                         NombreUsuario.Text = u1.usuario1;
                         ContraseñaUsuario.Password = u1.contraseña_usuario;
                     }
@@ -894,26 +1100,6 @@ namespace SistemaProyecto3.Presentacion
                     {
                         throw new ArgumentException("Ha ocurrido un error inesperado");
                     }
-                }
-                else if (ComboTipoUsuario.SelectedIndex == 2)
-                {
-                    if (u1.ReadVendedor())
-                    {
-                        MessageBox.Show("Mostrando los datos del usuario vendedor");
-                        ListUsuariosVendedor = u1.GetUsuariosVendedor();
-                        Lista3.ItemsSource = ListUsuariosVendedor;
-                        Lista3.Items.Refresh();
-                        NombreUsuario.Text = u1.usuario1;
-                        ContraseñaUsuario.Password = u1.contraseña_usuario;                        
-                    }
-                    else
-                    {
-                        throw new ArgumentException("Ha ocurrido un error inesperado");
-                    }
-                }
-                else
-                {
-                    throw new ArgumentException("Ha ocurrido un error inesperado");
                 }
             }
             catch (Exception ex)
@@ -927,44 +1113,42 @@ namespace SistemaProyecto3.Presentacion
         {
             try
             {
-                Usuario u1 = new Usuario()
+                Usuario usuarioValidaciones = new Usuario();
+                if (usuarioValidaciones.GetUsuarios().Count == 0)
                 {
-                    usuario1 = NombreUsuario.Text,
-                    contraseña_usuario = ContraseñaUsuario.Password
-                };
-                if (ComboTipoUsuario.SelectedIndex == 0)
-                {
-                    MessageBox.Show("Debe elegir el tipo de usuario para modificar la contraseña");
+                    MessageBox.Show("Debe existir al menos un usuario para modificar la contraseña");
                 }
-                else if (ComboTipoUsuario.SelectedIndex == 1)
+                if (NombreUsuario.Text.Length == 0)
                 {
-                    if (u1.ReadAdmin())
-                    {
-                        MessageBox.Show("La contraseña del usuario administrador se ha actualizado");
-                        NombreUsuario.Text = "";
-                        ContraseñaUsuario.Password = "";
-                    }
-                    else
-                    {
-                        throw new ArgumentException("Ha ocurrido un error inesperado");
-                    }
+                    MessageBox.Show("Debe ingresar el nombre de usuario para modificar su contraseña");
                 }
-                else if (ComboTipoUsuario.SelectedIndex == 2)
+                else if (!usuarioValidaciones.GetUsuarios().Any(c => c.usuario1 == NombreUsuario.Text))
                 {
-                    if (u1.ReadVendedor())
-                    {
-                        MessageBox.Show("Se han actualizado los datos del usuario vendedor");
-                        NombreUsuario.Text = "";
-                        ContraseñaUsuario.Password = "";
-                    }
-                    else
-                    {
-                        throw new ArgumentException("Ha ocurrido un error inesperado");
-                    }
+                    MessageBox.Show("El usuario no existe");
+                }
+                else if (ComboTipoUsuario.SelectedIndex == 0)
+                {
+                    MessageBox.Show("Debe escoger un tipo de usuario");
                 }
                 else
                 {
-                    throw new ArgumentException("Ha ocurrido un error inesperado");
+                    Usuario u1 = new Usuario()
+                    {
+                        tipo_usuario = ComboTipoUsuario.SelectedIndex, 
+                        usuario1 = NombreUsuario.Text,
+                        contraseña_usuario = ContraseñaUsuario.Password
+                    };
+                    if (u1.UpdatePass())
+                    {
+                        MessageBox.Show("El usuario se ha actualizado");
+                        ComboTipoUsuario.SelectedIndex = 0;
+                        NombreUsuario.Text = "";
+                        ContraseñaUsuario.Password = "";
+                    }
+                    else
+                    {
+                        throw new ArgumentException("Ha ocurrido un error inesperado");
+                    }
                 }
             }
             catch (Exception ex)
@@ -981,30 +1165,74 @@ namespace SistemaProyecto3.Presentacion
         {
             try
             {
-                Mecanico m1 = new Mecanico()
+                if (RutMecanico.Text.Length == 0 || NombreMecanico.Text.Length == 0 ||
+                    ApellidoMecanico.Text.Length == 0 || SueldoMecanico.Text.Length == 0 ||
+                    EdadMecanico.Text.Length == 0)
                 {
-                    rut_mecanico = RutMecanico.Text,
-                    nombre_mecanico = NombreMecanico.Text,
-                    apellido_vendedor = ApellidoMecanico.Text,
-                    edad_mecanico = int.Parse(EdadMecanico.Text),
-                    sexo_mecanico = ComboSexoMecanico.Text,
-                    sueldo_mecanico = int.Parse(SueldoMecanico.Text),
-                    id_sucursal = int.Parse(IDMecanico.Text)
-                };
-                if(m1.CreateMecanico())
+                    MessageBox.Show("Uno o más campos estan vacíos");
+                }
+                else if (ComboSexoMecanico.SelectedIndex == 0)
                 {
-                    MessageBox.Show("Se ha creado el mecanico");
-                    RutMecanico.Text = "";
-                    NombreMecanico.Text = "";
-                    ApellidoMecanico.Text = "";
-                    EdadMecanico.Text = "";
-                    ComboSexoMecanico.SelectedIndex = 0;
-                    SueldoMecanico.Text = "";
-                    IDMecanico.Text = "";
+                    MessageBox.Show("Debe seleccionar el sexo del mecanico");
+                }
+                else if (int.Parse(SueldoMecanico.Text) < 150000)
+                {
+                    MessageBox.Show("El sueldo no puede ser menor a $150.000");
+                }
+                else if (int.Parse(EdadMecanico.Text) < 18)
+                {
+                    MessageBox.Show("El mecanico debe ser mayor de edad");
+                }
+                else if (ComboIDSucursalMecanico.SelectedIndex == -1)
+                {
+                    MessageBox.Show("Debe seleccionar la sucursal asignada al mecanico");
                 }
                 else
                 {
-                    throw new ArgumentException("Ha ocurrido un error inesperado");
+                    Mecanico mecanicoValidaciones = new Mecanico();
+                    string rutSinDv = RutMecanico.Text.Substring(0, RutMecanico.Text.Length - 2);
+                    string dv = RutMecanico.Text.Substring(RutMecanico.Text.Length - 1, 1);
+                    string rutSinGuion = rutSinDv + dv;
+                    if (RutMecanico.Text != String.Format("{0}-{1}", rutSinDv, dv))
+                    {
+                        MessageBox.Show("Debe ingresar rut sin puntos y con guion\nEjemplo: 99999999-9");
+                    }
+                    else if (!mecanicoValidaciones.ValidarRut(RutMecanico.Text.ToUpper()))
+                    {
+                        MessageBox.Show("El rut no es válido");
+                    }
+                    else if (mecanicoValidaciones.GetMecanicos().Any(c => c.rut_mecanico == RutMecanico.Text.ToUpper()))
+                    {
+                        MessageBox.Show("Ya hay un mecanico con ese rut");
+                    }
+                    else
+                    {
+                        Mecanico m1 = new Mecanico()
+                        {
+                            rut_mecanico = RutMecanico.Text,
+                            nombre_mecanico = NombreMecanico.Text,
+                            apellido_vendedor = ApellidoMecanico.Text,
+                            edad_mecanico = int.Parse(EdadMecanico.Text),
+                            sexo_mecanico = ComboSexoMecanico.Text,
+                            sueldo_mecanico = int.Parse(SueldoMecanico.Text),
+                            id_sucursal = int.Parse(ComboIDSucursalMecanico.Text)
+                        };
+                        if (m1.CreateMecanico())
+                        {
+                            MessageBox.Show("Se ha creado el mecanico");
+                            RutMecanico.Text = "";
+                            NombreMecanico.Text = "";
+                            ApellidoMecanico.Text = "";
+                            EdadMecanico.Text = "";
+                            ComboSexoMecanico.SelectedIndex = 0;
+                            SueldoMecanico.Text = "";
+                            ComboIDSucursalMecanico.SelectedIndex = -1;
+                        }
+                        else
+                        {
+                            throw new ArgumentException("Ha ocurrido un error inesperado");
+                        }
+                    }
                 }
             }
             catch (Exception ex)
@@ -1018,30 +1246,88 @@ namespace SistemaProyecto3.Presentacion
         {
             try
             {
-                Mecanico m1 = new Mecanico()
+                Mecanico mecanicoValidaciones = new Mecanico();
+                if (mecanicoValidaciones.GetMecanicos().Count == 0)
                 {
-                    rut_mecanico = RutMecanico.Text,
-                    nombre_mecanico = NombreMecanico.Text,
-                    apellido_vendedor = ApellidoMecanico.Text,
-                    edad_mecanico = int.Parse(EdadMecanico.Text),
-                    sexo_mecanico = ComboSexoMecanico.Text,
-                    sueldo_mecanico = int.Parse(SueldoMecanico.Text),
-                    id_sucursal = int.Parse(IDMecanico.Text)
-                };
-                if (m1.UpdateMecanico())
+                    MessageBox.Show("Debe existir al menos un mecanico para modificar");
+                }
+                else if (RutMecanico.Text.Length == 0)
                 {
-                    MessageBox.Show("Los datos del Mecanico se han actualizado");
-                    RutMecanico.Text = "";
-                    NombreMecanico.Text = "";
-                    ApellidoMecanico.Text = "";
-                    EdadMecanico.Text = "";
-                    ComboSexoMecanico.SelectedIndex = 0;
-                    SueldoMecanico.Text = "";
-                    IDMecanico.Text = "";
+                    MessageBox.Show("Ingrese rut para modificar mecanico");
+                }
+                else if (RutMecanico.Text.Length < 2)
+                {
+                    MessageBox.Show("Debe ingresar un rut válido");
                 }
                 else
                 {
-                    throw new ArgumentException("Ha ocurrido un error inesperado");
+                    string rutSinDv = RutMecanico.Text.Substring(0, RutMecanico.Text.Length - 2);
+                    string dv = RutMecanico.Text.Substring(RutMecanico.Text.Length - 1, 1);
+                    string rutSinGuion = rutSinDv + dv;
+                    if (RutMecanico.Text != String.Format("{0}-{1}", rutSinDv, dv))
+                    {
+                        MessageBox.Show("Debe ingresar rut sin puntos y con guion\nEjemplo: 99999999-9");
+                    }
+                    else if (!mecanicoValidaciones.ValidarRut(RutMecanico.Text.ToUpper()))
+                    {
+                        MessageBox.Show("El rut no es válido");
+                    }
+                    else if (!mecanicoValidaciones.GetMecanicos().Any(c => c.rut_mecanico == RutMecanico.Text.ToUpper()))
+                    {
+                        MessageBox.Show("El rut ingresado no existe");
+                    }
+                    else
+                    {
+                        if (NombreMecanico.Text.Length == 0 || ApellidoMecanico.Text.Length == 0 || 
+                            SueldoMecanico.Text.Length == 0 || EdadMecanico.Text.Length == 0)
+                        {
+                            MessageBox.Show("Uno o más campos estan vacíos");
+                        }
+                        else if (ComboSexoMecanico.SelectedIndex == 0)
+                        {
+                            MessageBox.Show("Debe seleccionar el sexo del mecanico");
+                        }
+                        else if (int.Parse(SueldoMecanico.Text) < 150000)
+                        {
+                            MessageBox.Show("El sueldo no puede ser menor a $150.000");
+                        }
+                        else if (int.Parse(EdadMecanico.Text) < 18)
+                        {
+                            MessageBox.Show("El mecanico debe ser mayor de edad");
+                        }
+                        else if (ComboIDSucursalMecanico.SelectedIndex == -1)
+                        {
+                            MessageBox.Show("Debe seleccionar la sucursal asignada al mecanico");
+                        }
+                        else
+                        {
+                            Mecanico m1 = new Mecanico()
+                            {
+                                rut_mecanico = RutMecanico.Text,
+                                nombre_mecanico = NombreMecanico.Text,
+                                apellido_vendedor = ApellidoMecanico.Text,
+                                edad_mecanico = int.Parse(EdadMecanico.Text),
+                                sexo_mecanico = ComboSexoMecanico.Text,
+                                sueldo_mecanico = int.Parse(SueldoMecanico.Text),
+                                id_sucursal = int.Parse(ComboIDSucursalMecanico.Text)
+                            };
+                            if (m1.UpdateMecanico())
+                            {
+                                MessageBox.Show("Los datos del Mecanico se han actualizado");
+                                RutMecanico.Text = "";
+                                NombreMecanico.Text = "";
+                                ApellidoMecanico.Text = "";
+                                EdadMecanico.Text = "";
+                                ComboSexoMecanico.SelectedIndex = 0;
+                                SueldoMecanico.Text = "";
+                                ComboIDSucursalMecanico.SelectedIndex = -1;
+                            }
+                            else
+                            {
+                                throw new ArgumentException("Ha ocurrido un error inesperado");
+                            }
+                        }
+                    }
                 }
             }
             catch (Exception ex)
@@ -1055,24 +1341,58 @@ namespace SistemaProyecto3.Presentacion
         {
             try
             {
-                Mecanico m1 = new Mecanico()
+                Mecanico mecanicoValidaciones = new Mecanico();
+                if (mecanicoValidaciones.GetMecanicos().Count == 0)
                 {
-                    rut_mecanico = RutMecanico.Text
-                };
-                if(m1.DeleteMecanico())
+                    MessageBox.Show("Debe existir al menos un mecanico para eliminar");
+                }
+                else if (RutMecanico.Text.Length == 0)
                 {
-                    MessageBox.Show("El mecanico se ha eliminado");
-                    RutMecanico.Text = "";
-                    NombreMecanico.Text = "";
-                    ApellidoMecanico.Text = "";
-                    EdadMecanico.Text = "";
-                    ComboSexoMecanico.SelectedIndex = 0;
-                    SueldoMecanico.Text = "";
-                    IDMecanico.Text = "";
+                    MessageBox.Show("Ingrese rut para eliminar mecanico");
+                }
+                else if (RutMecanico.Text.Length < 2)
+                {
+                    MessageBox.Show("Debe ingresar un rut válido");
                 }
                 else
                 {
-                    throw new ArgumentException("Ha ocurrido un error inesperado");
+                    string rutSinDv = RutMecanico.Text.Substring(0, RutMecanico.Text.Length - 2);
+                    string dv = RutMecanico.Text.Substring(RutMecanico.Text.Length - 1, 1);
+                    string rutSinGuion = rutSinDv + dv;
+                    if (RutMecanico.Text != String.Format("{0}-{1}", rutSinDv, dv))
+                    {
+                        MessageBox.Show("Debe ingresar rut sin puntos y con guion\nEjemplo: 99999999-9");
+                    }
+                    else if (!mecanicoValidaciones.ValidarRut(RutMecanico.Text.ToUpper()))
+                    {
+                        MessageBox.Show("El rut no es válido");
+                    }
+                    else if (!mecanicoValidaciones.GetMecanicos().Any(c => c.rut_mecanico == RutMecanico.Text.ToUpper()))
+                    {
+                        MessageBox.Show("El rut ingresado no existe");
+                    }
+                    else
+                    {
+                        Mecanico m1 = new Mecanico()
+                        {
+                            rut_mecanico = RutMecanico.Text
+                        };
+                        if (m1.DeleteMecanico())
+                        {
+                            MessageBox.Show("El mecanico se ha eliminado");
+                            RutMecanico.Text = "";
+                            NombreMecanico.Text = "";
+                            ApellidoMecanico.Text = "";
+                            EdadMecanico.Text = "";
+                            ComboSexoMecanico.SelectedIndex = 0;
+                            SueldoMecanico.Text = "";
+                            ComboIDSucursalMecanico.SelectedIndex = -1;
+                        }
+                        else
+                        {
+                            throw new ArgumentException("Ha ocurrido un error inesperado");
+                        }
+                    }
                 }
             }
             catch (Exception ex)
@@ -1086,23 +1406,57 @@ namespace SistemaProyecto3.Presentacion
         {
             try
             {
-                Mecanico m1 = new Mecanico()
+                Mecanico mecanicoValidaciones = new Mecanico();
+                if (mecanicoValidaciones.GetMecanicos().Count == 0)
                 {
-                    rut_mecanico = RutMecanico.Text
-                };
-                if (m1.ReadMecanico())
+                    MessageBox.Show("Debe existir al menos un mecanico para buscar");
+                }
+                else if (RutMecanico.Text.Length == 0)
                 {
-                    RutMecanico.Text = m1.rut_mecanico;
-                    NombreMecanico.Text = m1.nombre_mecanico;
-                    ApellidoMecanico.Text = m1.apellido_vendedor;
-                    EdadMecanico.Text = Convert.ToString(m1.edad_mecanico);
-                    ComboSexoMecanico.Text = m1.sexo_mecanico;
-                    SueldoMecanico.Text = Convert.ToString(m1.sueldo_mecanico);
-                    IDMecanico.Text = Convert.ToString(m1.id_sucursal);
+                    MessageBox.Show("Ingrese rut para buscar mecanico");
+                }
+                else if (RutMecanico.Text.Length < 2)
+                {
+                    MessageBox.Show("Debe ingresar un rut válido");
                 }
                 else
                 {
-                    throw new ArgumentException("Ha ocurrido un error inesperado");
+                    string rutSinDv = RutMecanico.Text.Substring(0, RutMecanico.Text.Length - 2);
+                    string dv = RutMecanico.Text.Substring(RutMecanico.Text.Length - 1, 1);
+                    string rutSinGuion = rutSinDv + dv;
+                    if (RutMecanico.Text != String.Format("{0}-{1}", rutSinDv, dv))
+                    {
+                        MessageBox.Show("Debe ingresar rut sin puntos y con guion\nEjemplo: 99999999-9");
+                    }
+                    else if (!mecanicoValidaciones.ValidarRut(RutMecanico.Text.ToUpper()))
+                    {
+                        MessageBox.Show("El rut no es válido");
+                    }
+                    else if (!mecanicoValidaciones.GetMecanicos().Any(c => c.rut_mecanico == RutMecanico.Text.ToUpper()))
+                    {
+                        MessageBox.Show("El rut ingresado no existe");
+                    }
+                    else
+                    {
+                        Mecanico m1 = new Mecanico()
+                        {
+                            rut_mecanico = RutMecanico.Text
+                        };
+                        if (m1.ReadMecanico())
+                        {
+                            RutMecanico.Text = m1.rut_mecanico;
+                            NombreMecanico.Text = m1.nombre_mecanico;
+                            ApellidoMecanico.Text = m1.apellido_vendedor;
+                            EdadMecanico.Text = Convert.ToString(m1.edad_mecanico);
+                            ComboSexoMecanico.Text = m1.sexo_mecanico;
+                            SueldoMecanico.Text = Convert.ToString(m1.sueldo_mecanico);
+                            ComboIDSucursalMecanico.Text = Convert.ToString(m1.id_sucursal);
+                        }
+                        else
+                        {
+                            throw new ArgumentException("Ha ocurrido un error inesperado");
+                        }
+                    }
                 }
             }
             catch (Exception ex)

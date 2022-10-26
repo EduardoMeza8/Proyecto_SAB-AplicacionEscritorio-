@@ -212,7 +212,6 @@
                         <ListBoxItem Content="Masculino" Foreground="Gray"/>
                     </ComboBox>
                     <TextBox x:Name="SueldoVendedor" HorizontalAlignment="Left" Height="26" Margin="122,135,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-                    <TextBox x:Name="ID_Sucursal" HorizontalAlignment="Left" Height="26" Margin="122,160,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
                     <Label Content="*" HorizontalAlignment="Left" Margin="242,10,0,0" VerticalAlignment="Top" Width="16" Foreground="{x:Null}" FontWeight="Bold"/>
                     <Label Content="*" HorizontalAlignment="Left" Margin="242,35,0,0" VerticalAlignment="Top" Width="16" Foreground="{x:Null}" FontWeight="Bold"/>
                     <Label Content="*" HorizontalAlignment="Left" Margin="242,61,0,0" VerticalAlignment="Top" Width="16" Foreground="{x:Null}" FontWeight="Bold"/>
@@ -268,7 +267,7 @@
                             </LinearGradientBrush>
                         </Button.Background>
                     </Button>
-                    <Button Content="Cambiar" HorizontalAlignment="Left" Margin="427,126,0,0" VerticalAlignment="Top" Width="63" FontWeight="Bold" Foreground="#FF898080" BorderBrush="#FFABADB3" Click="btn_ModificarContraseñaUsuarioAoV">
+                    <Button Content="Modificar" HorizontalAlignment="Left" Margin="427,126,0,0" VerticalAlignment="Top" Width="63" FontWeight="Bold" Foreground="#FF898080" BorderBrush="#FFABADB3" Click="btn_ModificarContraseñaUsuarioAoV">
                         <Button.Background>
                             <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                                 <GradientStop Color="#FF9B9B9B" Offset="1"/>
@@ -355,6 +354,7 @@
                             </LinearGradientBrush>
                         </Button.Background>
                     </Button>
+                    <ComboBox x:Name="ComboIDSucursal" HorizontalAlignment="Left" Margin="122,159,0,0" VerticalAlignment="Top" Width="120" Height="26" RenderTransformOrigin="1.05,1.462"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Mecanico" BorderBrush="{x:Null}" Foreground="{x:Null}" Margin="-2,-2,-2,22">
@@ -374,7 +374,6 @@
                     <TextBox x:Name="RutMecanico" HorizontalAlignment="Left" Height="26" Margin="205,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
                     <TextBox x:Name="EdadMecanico" HorizontalAlignment="Left" Height="26" Margin="205,210,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
                     <TextBox x:Name="NombreMecanico" HorizontalAlignment="Left" Height="26" Margin="205,50,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-                    <TextBox x:Name="IDMecanico" HorizontalAlignment="Left" Height="26" Margin="205,250,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
                     <TextBox x:Name="ApellidoMecanico" HorizontalAlignment="Left" Height="26" Margin="205,90,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
                     <TextBox x:Name="SueldoMecanico" HorizontalAlignment="Left" Height="26" Margin="205,170,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
                     <Label Content="Sueldo" HorizontalAlignment="Left" Margin="70,170,0,0" VerticalAlignment="Top" Width="54" FontWeight="Bold" Foreground="#FF767676"/>
@@ -442,6 +441,7 @@
                             </LinearGradientBrush>
                         </Button.Background>
                     </Button>
+                    <ComboBox x:Name="ComboIDSucursalMecanico" HorizontalAlignment="Left" Margin="206,252,0,0" VerticalAlignment="Top" Width="120" Height="26" RenderTransformOrigin="1.05,1.462"/>
                 </Grid>
             </TabItem>
         </TabControl>

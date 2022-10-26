@@ -61,7 +61,24 @@ namespace SistemaProyecto3.Negocio
                 return false;
             }
         }
-        
+
+        // Buscar Usuarios
+        public bool ReadUsuarios()
+        {
+            try
+            {
+                USUARIO usuario = Conexion.GetDB_SAB_Entities.USUARIO.First(v => v.usuario1 == usuario1);
+                usuario1 = usuario.usuario1;
+                contraseña_usuario = usuario.contraseña_usuario;
+                tipo_usuario = usuario.tipo_usuario;
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         // Buscar Usuario Admin
         public bool ReadAdmin()
         {
@@ -96,28 +113,12 @@ namespace SistemaProyecto3.Negocio
             }
         }
         
-        // Eliminar Usuario Admin
-        public bool DeleteAdmin()
+        // Eliminar Ususario 
+        public bool DeleteUsuario()
         {
             try
             {
-                USUARIO userAdmin = Conexion.GetDB_SAB_Entities.USUARIO.First(v => v.usuario1 == usuario1 && v.tipo_usuario == 1);
-                Conexion.GetDB_SAB_Entities.USUARIO.Remove(userAdmin);
-                Conexion.GetDB_SAB_Entities.SaveChanges();
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-        
-        // Eliminar Ususario Vendedor
-        public bool DeleteVendedor()
-        {
-            try
-            {
-                USUARIO userVendedor = Conexion.GetDB_SAB_Entities.USUARIO.First(v => v.usuario1 == usuario1 && v.tipo_usuario == 2);
+                USUARIO userVendedor = Conexion.GetDB_SAB_Entities.USUARIO.First(v => v.usuario1 == usuario1);
                 Conexion.GetDB_SAB_Entities.USUARIO.Remove(userVendedor);
                 Conexion.GetDB_SAB_Entities.SaveChanges();
                 return true;
@@ -128,29 +129,14 @@ namespace SistemaProyecto3.Negocio
             }
         }
         
-        // Update pass Admin
-        public bool UpdatePassAdmin()
+        // Update pass 
+        public bool UpdatePass()
         {
             try
             {
-                USUARIO userAdmin = Conexion.GetDB_SAB_Entities.USUARIO.First(v => v.usuario1 == usuario1 && v.tipo_usuario == 1);
-                userAdmin.contraseña_usuario = contraseña_usuario;
-                Conexion.GetDB_SAB_Entities.SaveChanges();
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-        
-        // Update pass Vendedor
-        public bool UpdatePassVendedor()
-        {
-            try
-            {
-                USUARIO userVendedor = Conexion.GetDB_SAB_Entities.USUARIO.First(v => v.usuario1 == usuario1 && v.tipo_usuario == 2);
-                userVendedor.contraseña_usuario = contraseña_usuario;
+                USUARIO user = Conexion.GetDB_SAB_Entities.USUARIO.First(v => v.usuario1 == usuario1);
+                user.tipo_usuario = tipo_usuario;
+                user.contraseña_usuario = contraseña_usuario;
                 Conexion.GetDB_SAB_Entities.SaveChanges();
                 return true;
             }
@@ -196,6 +182,22 @@ namespace SistemaProyecto3.Negocio
                 }
             }
             return ListaUsuariosVendedor;
+        }
+
+        // Lista Usuarios
+        public List<Usuario> GetUsuarios()
+        {
+            List<Usuario> ListaUsuariosAdmin = new List<Usuario>();
+            foreach (USUARIO UserAdmin in Conexion.GetDB_SAB_Entities.USUARIO.ToList())
+            {
+                ListaUsuariosAdmin.Add(new Usuario()
+                {
+                    usuario1 = UserAdmin.usuario1,
+                    contraseña_usuario = UserAdmin.contraseña_usuario,
+                    tipo_usuario = UserAdmin.tipo_usuario
+                });
+            }
+            return ListaUsuariosAdmin;
         }
     }
 }
