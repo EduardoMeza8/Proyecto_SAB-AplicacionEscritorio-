@@ -17,9 +17,9 @@ namespace SistemaProyecto3.Negocio
         public string descripcion_factura { get; set; }
         public string descripcion_cliente_factura { get; set; }
         public string rut_factura { get; set; }
-        public string rut_cliente_factura { get; set; }
         public string rut_empresa_factura { get; set; }
         public string patente_producto_factura { get; set; }
+        public string tipo_servicio_factura { get; set; }
 
         public Factura()
         {
@@ -30,9 +30,9 @@ namespace SistemaProyecto3.Negocio
             descripcion_factura = null;
             descripcion_cliente_factura = null;
             rut_factura = null;
-            rut_cliente_factura = null;
             rut_empresa_factura = null;
             patente_producto_factura = null;
+            tipo_servicio_factura = null;
         }
 
         public bool CrearFacturaServicio()
@@ -48,8 +48,9 @@ namespace SistemaProyecto3.Negocio
                     descripcion_factura = descripcion_factura,
                     descripcion_cliente_factura = descripcion_cliente_factura,
                     rut_factura = rut_factura,
-                    rut_cliente_factura = rut_cliente_factura,
-                    rut_empresa_factura = rut_empresa_factura
+                    rut_empresa_factura = rut_empresa_factura,
+                    patente_producto_factura = patente_producto_factura,
+                    tipo_servicio_factura = tipo_servicio_factura
                 };
                 Conexion.GetDB_SAB_Entities.FACTURA.Add(factura);
                 Conexion.GetDB_SAB_Entities.SaveChanges();
@@ -74,10 +75,13 @@ namespace SistemaProyecto3.Negocio
                     descripcion_factura = descripcion_factura,
                     descripcion_cliente_factura = descripcion_cliente_factura,
                     rut_factura = rut_factura,
-                    rut_cliente_factura = rut_cliente_factura,
                     rut_empresa_factura = rut_empresa_factura,
-                    patente_producto_factura = patente_producto_factura
+                    patente_producto_factura = patente_producto_factura,
+                    tipo_servicio_factura = tipo_servicio_factura
                 };
+                VENDEDOR vendedor = Conexion.GetDB_SAB_Entities.VENDEDOR.First(v => v.rut_vendedor == factura.rut_factura);
+                vendedor.ventas_totales = (vendedor.ventas_totales + monto_factura);
+                vendedor.bono_vendedor = Convert.ToInt32(vendedor.ventas_totales * 0.05);
                 Conexion.GetDB_SAB_Entities.FACTURA.Add(factura);
                 Conexion.GetDB_SAB_Entities.SaveChanges();
                 return true;
@@ -103,9 +107,9 @@ namespace SistemaProyecto3.Negocio
                     descripcion_factura = factura.descripcion_factura,
                     descripcion_cliente_factura = factura.descripcion_cliente_factura,
                     rut_factura = factura.rut_factura,
-                    rut_cliente_factura = factura.rut_cliente_factura,
                     rut_empresa_factura = factura.rut_empresa_factura,
-                    patente_producto_factura = factura.patente_producto_factura
+                    patente_producto_factura = factura.patente_producto_factura,
+                    tipo_servicio_factura = factura.tipo_servicio_factura
                 });
             }
             return ListaFacturas;

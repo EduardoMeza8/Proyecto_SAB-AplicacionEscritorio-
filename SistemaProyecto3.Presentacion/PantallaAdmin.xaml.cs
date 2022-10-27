@@ -508,14 +508,15 @@ namespace SistemaProyecto3.Presentacion
             try
             {
                 Sucursal sucursalValidaciones = new Sucursal();
-                if (textID_Sucursal.Text.Length == 0 || textNombre_Sucursal.Text.Length == 0 || 
-                    textCiudad_Sucursal.Text.Length == 0 || textDireccion_Sucursal.Text.Length == 0)
+                if (textNombre_Sucursal.Text.Length == 0 || textCiudad_Sucursal.Text.Length == 0 ||
+                    textDireccion_Sucursal.Text.Length == 0)
                 {
                     MessageBox.Show("Uno o más campos estan vacíos");
                 }
-                else if (textID_Sucursal.Text == "0")
+                else if (textID_Sucursal.Text.Length > 0)
                 {
-                    MessageBox.Show("Debe ingresar un id mayor a 0");
+                    MessageBox.Show("No es necesario ingresar id al crear sucursal");
+                    textID_Sucursal.Text = "";
                 }
                 else if (sucursalValidaciones.GetSucursales().Any(c => c.id_sucursal == int.Parse(textID_Sucursal.Text)))
                 {

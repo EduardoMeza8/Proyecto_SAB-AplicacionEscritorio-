@@ -19,5 +19,10 @@ namespace SistemaProyecto3.Dato
         public int costo_servicio { get; set; }
         public string patente_servicio { get; set; }
         public string descripcion { get; set; }
+        public Nullable<int> id_boleta { get; set; }
+        public Nullable<int> id_factura { get; set; }
+    
+        public virtual BOLETA BOLETA { get; set; }
+        public virtual FACTURA FACTURA { get; set; }
     }
 }

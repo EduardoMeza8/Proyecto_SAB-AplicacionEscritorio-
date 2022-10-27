@@ -72,6 +72,7 @@
           <Property Name="edad_mecanico" Type="int" Nullable="false" />
           <Property Name="sexo_mecanico" Type="varchar" MaxLength="9" Nullable="false" />
           <Property Name="sueldo_mecanico" Type="int" Nullable="false" />
+          <Property Name="bono_mecanico" Type="int" Nullable="false" />
           <Property Name="id_sucursal" Type="int" />
         </EntityType>
         <EntityType Name="PRODUCTO">
@@ -85,6 +86,8 @@
           <Property Name="modelo" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="tipo" Type="int" Nullable="false" />
           <Property Name="precio" Type="int" Nullable="false" />
+          <Property Name="id_boleta" Type="int" />
+          <Property Name="id_factura" Type="int" />
         </EntityType>
         <EntityType Name="SERVICIO">
           <Key>
@@ -95,6 +98,8 @@
           <Property Name="costo_servicio" Type="int" Nullable="false" />
           <Property Name="patente_servicio" Type="varchar" MaxLength="9" Nullable="false" />
           <Property Name="descripcion" Type="varchar" MaxLength="250" />
+          <Property Name="id_boleta" Type="int" />
+          <Property Name="id_factura" Type="int" />
         </EntityType>
         <EntityType Name="SUCURSAL">
           <Key>
@@ -198,7 +203,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__MECANICO__id_suc__267ABA7A">
+        <Association Name="FK__MECANICO__id_suc__46E78A0C">
           <End Role="SUCURSAL" Type="Self.SUCURSAL" Multiplicity="0..1" />
           <End Role="MECANICO" Type="Self.MECANICO" Multiplicity="*" />
           <ReferentialConstraint>
@@ -207,6 +212,54 @@
             </Principal>
             <Dependent Role="MECANICO">
               <PropertyRef Name="id_sucursal" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__PRODUCTO__id_bol__49C3F6B7">
+          <End Role="BOLETA" Type="Self.BOLETA" Multiplicity="0..1" />
+          <End Role="PRODUCTO" Type="Self.PRODUCTO" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="BOLETA">
+              <PropertyRef Name="id_boleta" />
+            </Principal>
+            <Dependent Role="PRODUCTO">
+              <PropertyRef Name="id_boleta" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__PRODUCTO__id_fac__4AB81AF0">
+          <End Role="FACTURA" Type="Self.FACTURA" Multiplicity="0..1" />
+          <End Role="PRODUCTO" Type="Self.PRODUCTO" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="FACTURA">
+              <PropertyRef Name="id_factura" />
+            </Principal>
+            <Dependent Role="PRODUCTO">
+              <PropertyRef Name="id_factura" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__SERVICIO__id_bol__4D94879B">
+          <End Role="BOLETA" Type="Self.BOLETA" Multiplicity="0..1" />
+          <End Role="SERVICIO" Type="Self.SERVICIO" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="BOLETA">
+              <PropertyRef Name="id_boleta" />
+            </Principal>
+            <Dependent Role="SERVICIO">
+              <PropertyRef Name="id_boleta" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__SERVICIO__id_fac__4E88ABD4">
+          <End Role="FACTURA" Type="Self.FACTURA" Multiplicity="0..1" />
+          <End Role="SERVICIO" Type="Self.SERVICIO" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="FACTURA">
+              <PropertyRef Name="id_factura" />
+            </Principal>
+            <Dependent Role="SERVICIO">
+              <PropertyRef Name="id_factura" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -266,9 +319,25 @@
             <End Role="EMPRESA" EntitySet="EMPRESA" />
             <End Role="FACTURA" EntitySet="FACTURA" />
           </AssociationSet>
-          <AssociationSet Name="FK__MECANICO__id_suc__267ABA7A" Association="Self.FK__MECANICO__id_suc__267ABA7A">
+          <AssociationSet Name="FK__MECANICO__id_suc__46E78A0C" Association="Self.FK__MECANICO__id_suc__46E78A0C">
             <End Role="SUCURSAL" EntitySet="SUCURSAL" />
             <End Role="MECANICO" EntitySet="MECANICO" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PRODUCTO__id_bol__49C3F6B7" Association="Self.FK__PRODUCTO__id_bol__49C3F6B7">
+            <End Role="BOLETA" EntitySet="BOLETA" />
+            <End Role="PRODUCTO" EntitySet="PRODUCTO" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PRODUCTO__id_fac__4AB81AF0" Association="Self.FK__PRODUCTO__id_fac__4AB81AF0">
+            <End Role="FACTURA" EntitySet="FACTURA" />
+            <End Role="PRODUCTO" EntitySet="PRODUCTO" />
+          </AssociationSet>
+          <AssociationSet Name="FK__SERVICIO__id_bol__4D94879B" Association="Self.FK__SERVICIO__id_bol__4D94879B">
+            <End Role="BOLETA" EntitySet="BOLETA" />
+            <End Role="SERVICIO" EntitySet="SERVICIO" />
+          </AssociationSet>
+          <AssociationSet Name="FK__SERVICIO__id_fac__4E88ABD4" Association="Self.FK__SERVICIO__id_fac__4E88ABD4">
+            <End Role="FACTURA" EntitySet="FACTURA" />
+            <End Role="SERVICIO" EntitySet="SERVICIO" />
           </AssociationSet>
           <AssociationSet Name="FK__VENDEDOR__id_suc__29572725" Association="Self.FK__VENDEDOR__id_suc__29572725">
             <End Role="SUCURSAL" EntitySet="SUCURSAL" />
@@ -302,6 +371,8 @@
           <Property Name="id_venta" Type="Int32" />
           <NavigationProperty Name="VENTA" Relationship="Self.FK__BOLETA__id_venta__34C8D9D1" FromRole="BOLETA" ToRole="VENTA" />
           <NavigationProperty Name="CLIENTE" Relationship="Self.FK__CLIENTE__id_bole__4316F928" FromRole="BOLETA" ToRole="CLIENTE" />
+          <NavigationProperty Name="PRODUCTO" Relationship="Self.FK__PRODUCTO__id_bol__49C3F6B7" FromRole="BOLETA" ToRole="PRODUCTO" />
+          <NavigationProperty Name="SERVICIO" Relationship="Self.FK__SERVICIO__id_bol__4D94879B" FromRole="BOLETA" ToRole="SERVICIO" />
         </EntityType>
         <EntityType Name="CLIENTE">
           <Key>
@@ -348,6 +419,8 @@
           <NavigationProperty Name="CLIENTE" Relationship="Self.FK__CLIENTE__id_fact__440B1D61" FromRole="FACTURA" ToRole="CLIENTE" />
           <NavigationProperty Name="EMPRESA" Relationship="Self.FK__FACTURA__rut_emp__403A8C7D" FromRole="FACTURA" ToRole="EMPRESA" />
           <NavigationProperty Name="VENTA" Relationship="Self.FK__FACTURA__id_vent__3F466844" FromRole="FACTURA" ToRole="VENTA" />
+          <NavigationProperty Name="PRODUCTO" Relationship="Self.FK__PRODUCTO__id_fac__4AB81AF0" FromRole="FACTURA" ToRole="PRODUCTO" />
+          <NavigationProperty Name="SERVICIO" Relationship="Self.FK__SERVICIO__id_fac__4E88ABD4" FromRole="FACTURA" ToRole="SERVICIO" />
         </EntityType>
         <EntityType Name="MECANICO">
           <Key>
@@ -359,8 +432,9 @@
           <Property Name="edad_mecanico" Type="Int32" Nullable="false" />
           <Property Name="sexo_mecanico" Type="String" MaxLength="9" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="sueldo_mecanico" Type="Int32" Nullable="false" />
+          <Property Name="bono_mecanico" Type="Int32" Nullable="false" />
           <Property Name="id_sucursal" Type="Int32" />
-          <NavigationProperty Name="SUCURSAL" Relationship="Self.FK__MECANICO__id_suc__267ABA7A" FromRole="MECANICO" ToRole="SUCURSAL" />
+          <NavigationProperty Name="SUCURSAL" Relationship="Self.FK__MECANICO__id_suc__46E78A0C" FromRole="MECANICO" ToRole="SUCURSAL" />
         </EntityType>
         <EntityType Name="PRODUCTO">
           <Key>
@@ -373,6 +447,10 @@
           <Property Name="modelo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="tipo" Type="Int32" Nullable="false" />
           <Property Name="precio" Type="Int32" Nullable="false" />
+          <Property Name="id_boleta" Type="Int32" />
+          <Property Name="id_factura" Type="Int32" />
+          <NavigationProperty Name="BOLETA" Relationship="Self.FK__PRODUCTO__id_bol__49C3F6B7" FromRole="PRODUCTO" ToRole="BOLETA" />
+          <NavigationProperty Name="FACTURA" Relationship="Self.FK__PRODUCTO__id_fac__4AB81AF0" FromRole="PRODUCTO" ToRole="FACTURA" />
         </EntityType>
         <EntityType Name="SERVICIO">
           <Key>
@@ -383,6 +461,10 @@
           <Property Name="costo_servicio" Type="Int32" Nullable="false" />
           <Property Name="patente_servicio" Type="String" MaxLength="9" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="descripcion" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="id_boleta" Type="Int32" />
+          <Property Name="id_factura" Type="Int32" />
+          <NavigationProperty Name="BOLETA" Relationship="Self.FK__SERVICIO__id_bol__4D94879B" FromRole="SERVICIO" ToRole="BOLETA" />
+          <NavigationProperty Name="FACTURA" Relationship="Self.FK__SERVICIO__id_fac__4E88ABD4" FromRole="SERVICIO" ToRole="FACTURA" />
         </EntityType>
         <EntityType Name="SUCURSAL">
           <Key>
@@ -392,7 +474,7 @@
           <Property Name="ciudad_sucursal" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="direccion_sucursal" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="nombre_sucursal" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
-          <NavigationProperty Name="MECANICO" Relationship="Self.FK__MECANICO__id_suc__267ABA7A" FromRole="SUCURSAL" ToRole="MECANICO" />
+          <NavigationProperty Name="MECANICO" Relationship="Self.FK__MECANICO__id_suc__46E78A0C" FromRole="SUCURSAL" ToRole="MECANICO" />
           <NavigationProperty Name="VENDEDOR" Relationship="Self.FK__VENDEDOR__id_suc__29572725" FromRole="SUCURSAL" ToRole="VENDEDOR" />
         </EntityType>
         <EntityType Name="USUARIO">
@@ -457,6 +539,30 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK__PRODUCTO__id_bol__49C3F6B7">
+          <End Role="BOLETA" Type="Self.BOLETA" Multiplicity="0..1" />
+          <End Role="PRODUCTO" Type="Self.PRODUCTO" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="BOLETA">
+              <PropertyRef Name="id_boleta" />
+            </Principal>
+            <Dependent Role="PRODUCTO">
+              <PropertyRef Name="id_boleta" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__SERVICIO__id_bol__4D94879B">
+          <End Role="BOLETA" Type="Self.BOLETA" Multiplicity="0..1" />
+          <End Role="SERVICIO" Type="Self.SERVICIO" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="BOLETA">
+              <PropertyRef Name="id_boleta" />
+            </Principal>
+            <Dependent Role="SERVICIO">
+              <PropertyRef Name="id_boleta" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK__CLIENTE__id_fact__440B1D61">
           <End Role="FACTURA" Type="Self.FACTURA" Multiplicity="0..1" />
           <End Role="CLIENTE" Type="Self.CLIENTE" Multiplicity="*" />
@@ -493,7 +599,31 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__MECANICO__id_suc__267ABA7A">
+        <Association Name="FK__PRODUCTO__id_fac__4AB81AF0">
+          <End Role="FACTURA" Type="Self.FACTURA" Multiplicity="0..1" />
+          <End Role="PRODUCTO" Type="Self.PRODUCTO" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="FACTURA">
+              <PropertyRef Name="id_factura" />
+            </Principal>
+            <Dependent Role="PRODUCTO">
+              <PropertyRef Name="id_factura" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__SERVICIO__id_fac__4E88ABD4">
+          <End Role="FACTURA" Type="Self.FACTURA" Multiplicity="0..1" />
+          <End Role="SERVICIO" Type="Self.SERVICIO" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="FACTURA">
+              <PropertyRef Name="id_factura" />
+            </Principal>
+            <Dependent Role="SERVICIO">
+              <PropertyRef Name="id_factura" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__MECANICO__id_suc__46E78A0C">
           <End Role="SUCURSAL" Type="Self.SUCURSAL" Multiplicity="0..1" />
           <End Role="MECANICO" Type="Self.MECANICO" Multiplicity="*" />
           <ReferentialConstraint>
@@ -549,6 +679,14 @@
             <End Role="BOLETA" EntitySet="BOLETA" />
             <End Role="CLIENTE" EntitySet="CLIENTE" />
           </AssociationSet>
+          <AssociationSet Name="FK__PRODUCTO__id_bol__49C3F6B7" Association="Self.FK__PRODUCTO__id_bol__49C3F6B7">
+            <End Role="BOLETA" EntitySet="BOLETA" />
+            <End Role="PRODUCTO" EntitySet="PRODUCTO" />
+          </AssociationSet>
+          <AssociationSet Name="FK__SERVICIO__id_bol__4D94879B" Association="Self.FK__SERVICIO__id_bol__4D94879B">
+            <End Role="BOLETA" EntitySet="BOLETA" />
+            <End Role="SERVICIO" EntitySet="SERVICIO" />
+          </AssociationSet>
           <AssociationSet Name="FK__CLIENTE__id_fact__440B1D61" Association="Self.FK__CLIENTE__id_fact__440B1D61">
             <End Role="FACTURA" EntitySet="FACTURA" />
             <End Role="CLIENTE" EntitySet="CLIENTE" />
@@ -561,7 +699,15 @@
             <End Role="VENTA" EntitySet="VENTA" />
             <End Role="FACTURA" EntitySet="FACTURA" />
           </AssociationSet>
-          <AssociationSet Name="FK__MECANICO__id_suc__267ABA7A" Association="Self.FK__MECANICO__id_suc__267ABA7A">
+          <AssociationSet Name="FK__PRODUCTO__id_fac__4AB81AF0" Association="Self.FK__PRODUCTO__id_fac__4AB81AF0">
+            <End Role="FACTURA" EntitySet="FACTURA" />
+            <End Role="PRODUCTO" EntitySet="PRODUCTO" />
+          </AssociationSet>
+          <AssociationSet Name="FK__SERVICIO__id_fac__4E88ABD4" Association="Self.FK__SERVICIO__id_fac__4E88ABD4">
+            <End Role="FACTURA" EntitySet="FACTURA" />
+            <End Role="SERVICIO" EntitySet="SERVICIO" />
+          </AssociationSet>
+          <AssociationSet Name="FK__MECANICO__id_suc__46E78A0C" Association="Self.FK__MECANICO__id_suc__46E78A0C">
             <End Role="SUCURSAL" EntitySet="SUCURSAL" />
             <End Role="MECANICO" EntitySet="MECANICO" />
           </AssociationSet>
@@ -650,6 +796,7 @@
                 <ScalarProperty Name="edad_mecanico" ColumnName="edad_mecanico" />
                 <ScalarProperty Name="sexo_mecanico" ColumnName="sexo_mecanico" />
                 <ScalarProperty Name="sueldo_mecanico" ColumnName="sueldo_mecanico" />
+                <ScalarProperty Name="bono_mecanico" ColumnName="bono_mecanico" />
                 <ScalarProperty Name="id_sucursal" ColumnName="id_sucursal" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -664,6 +811,8 @@
                 <ScalarProperty Name="modelo" ColumnName="modelo" />
                 <ScalarProperty Name="tipo" ColumnName="tipo" />
                 <ScalarProperty Name="precio" ColumnName="precio" />
+                <ScalarProperty Name="id_boleta" ColumnName="id_boleta" />
+                <ScalarProperty Name="id_factura" ColumnName="id_factura" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -675,6 +824,8 @@
                 <ScalarProperty Name="costo_servicio" ColumnName="costo_servicio" />
                 <ScalarProperty Name="patente_servicio" ColumnName="patente_servicio" />
                 <ScalarProperty Name="descripcion" ColumnName="descripcion" />
+                <ScalarProperty Name="id_boleta" ColumnName="id_boleta" />
+                <ScalarProperty Name="id_factura" ColumnName="id_factura" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

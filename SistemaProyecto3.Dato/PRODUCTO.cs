@@ -21,5 +21,10 @@ namespace SistemaProyecto3.Dato
         public string modelo { get; set; }
         public int tipo { get; set; }
         public int precio { get; set; }
+        public Nullable<int> id_boleta { get; set; }
+        public Nullable<int> id_factura { get; set; }
+    
+        public virtual BOLETA BOLETA { get; set; }
+        public virtual FACTURA FACTURA { get; set; }
     }
 }

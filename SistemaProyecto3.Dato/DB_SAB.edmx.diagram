@@ -4,24 +4,28 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="94e5c21694f84ced865f65134f367cdb" Name="Diagram1">
-        <EntityTypeShape EntityType="Proyecto_3Model.BOLETA" Width="1.5" PointX="7.5" PointY="7.25" IsExpanded="true" />
-        <EntityTypeShape EntityType="Proyecto_3Model.CLIENTE" Width="1.5" PointX="9.75" PointY="7.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="Proyecto_3Model.EMPRESA" Width="1.5" PointX="5.25" PointY="3.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="Proyecto_3Model.FACTURA" Width="1.5" PointX="7.5" PointY="2" IsExpanded="true" />
-        <EntityTypeShape EntityType="Proyecto_3Model.MECANICO" Width="1.5" PointX="3" PointY="4" IsExpanded="true" />
-        <EntityTypeShape EntityType="Proyecto_3Model.PRODUCTO" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="Proyecto_3Model.SERVICIO" Width="1.5" PointX="9.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="Proyecto_3Model.SUCURSAL" Width="1.5" PointX="0.75" PointY="6.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="Proyecto_3Model.USUARIO" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="Proyecto_3Model.VENDEDOR" Width="1.5" PointX="3" PointY="7.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="Proyecto_3Model.VENTA" Width="1.5" PointX="5.25" PointY="7.75" IsExpanded="true" />
+      <Diagram DiagramId="5f6fdcb266da4c90b4d48f0106bfafc8" Name="Diagram1">
+        <EntityTypeShape EntityType="Proyecto_3Model.BOLETA" Width="1.5" PointX="7.5" PointY="11" IsExpanded="true" />
+        <EntityTypeShape EntityType="Proyecto_3Model.CLIENTE" Width="1.5" PointX="9.75" PointY="11.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="Proyecto_3Model.EMPRESA" Width="1.5" PointX="8.25" PointY="17.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="Proyecto_3Model.FACTURA" Width="1.5" PointX="10.5" PointY="15.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Proyecto_3Model.MECANICO" Width="1.5" PointX="3" PointY="7.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="Proyecto_3Model.PRODUCTO" Width="1.5" PointX="12.75" PointY="11.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="Proyecto_3Model.SERVICIO" Width="1.5" PointX="9.75" PointY="7.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="Proyecto_3Model.SUCURSAL" Width="1.5" PointX="0.75" PointY="10.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="Proyecto_3Model.USUARIO" Width="1.5" PointX="13.5" PointY="7.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="Proyecto_3Model.VENDEDOR" Width="1.5" PointX="3" PointY="11.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="Proyecto_3Model.VENTA" Width="1.5" PointX="5.25" PointY="11.625" IsExpanded="true" />
         <AssociationConnector Association="Proyecto_3Model.FK__BOLETA__id_venta__34C8D9D1" ManuallyRouted="false" />
         <AssociationConnector Association="Proyecto_3Model.FK__CLIENTE__id_bole__4316F928" ManuallyRouted="false" />
+        <AssociationConnector Association="Proyecto_3Model.FK__PRODUCTO__id_bol__49C3F6B7" ManuallyRouted="false" />
+        <AssociationConnector Association="Proyecto_3Model.FK__SERVICIO__id_bol__4D94879B" ManuallyRouted="false" />
         <AssociationConnector Association="Proyecto_3Model.FK__CLIENTE__id_fact__440B1D61" ManuallyRouted="false" />
         <AssociationConnector Association="Proyecto_3Model.FK__FACTURA__rut_emp__403A8C7D" ManuallyRouted="false" />
         <AssociationConnector Association="Proyecto_3Model.FK__FACTURA__id_vent__3F466844" ManuallyRouted="false" />
-        <AssociationConnector Association="Proyecto_3Model.FK__MECANICO__id_suc__267ABA7A" ManuallyRouted="false" />
+        <AssociationConnector Association="Proyecto_3Model.FK__PRODUCTO__id_fac__4AB81AF0" ManuallyRouted="false" />
+        <AssociationConnector Association="Proyecto_3Model.FK__SERVICIO__id_fac__4E88ABD4" ManuallyRouted="false" />
+        <AssociationConnector Association="Proyecto_3Model.FK__MECANICO__id_suc__46E78A0C" ManuallyRouted="false" />
         <AssociationConnector Association="Proyecto_3Model.FK__VENDEDOR__id_suc__29572725" ManuallyRouted="false" />
         <AssociationConnector Association="Proyecto_3Model.FK__VENTA__rut_vende__31EC6D26" ManuallyRouted="false" />
       </Diagram>

@@ -18,6 +18,8 @@ namespace SistemaProyecto3.Dato
         public FACTURA()
         {
             this.CLIENTE = new HashSet<CLIENTE>();
+            this.PRODUCTO = new HashSet<PRODUCTO>();
+            this.SERVICIO = new HashSet<SERVICIO>();
         }
     
         public int id_factura { get; set; }
@@ -39,5 +41,9 @@ namespace SistemaProyecto3.Dato
         public virtual ICollection<CLIENTE> CLIENTE { get; set; }
         public virtual EMPRESA EMPRESA { get; set; }
         public virtual VENTA VENTA { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<PRODUCTO> PRODUCTO { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<SERVICIO> SERVICIO { get; set; }
     }
 }

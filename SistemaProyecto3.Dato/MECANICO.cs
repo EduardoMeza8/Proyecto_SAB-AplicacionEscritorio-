@@ -20,6 +20,7 @@ namespace SistemaProyecto3.Dato
         public int edad_mecanico { get; set; }
         public string sexo_mecanico { get; set; }
         public int sueldo_mecanico { get; set; }
+        public int bono_mecanico { get; set; }
         public Nullable<int> id_sucursal { get; set; }
     
         public virtual SUCURSAL SUCURSAL { get; set; }
